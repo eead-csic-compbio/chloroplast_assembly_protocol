@@ -32,24 +32,24 @@ The following software packages, bundled with the scripts and located in bin/, a
 ## Examples
 
 * Fish cp reads from whole genome library, using provided test reads:
-```{r}
-$ ./0_get_cp_reads.pl test/ test_cp/ 
+```{shell}
+./0_get_cp_reads.pl test/ test_cp/ 
 ```    
 
 * Clean and trim reads to remove poor quality segments; output includes mean insert sizes and orientations:
-```{r}  
-$ ./1_cleanreads.pl test_cp reference.fna 
+```{shell}  
+./1_cleanreads.pl test_cp reference.fna 
 ```
 
 * Assemble cp genome from a single PE library:
-```{r}
+```{shell}
 cd test_cp
 ../2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
   --PEinsert 221 --ref ../reference.fna
 ```
 
 * Assemble cp genome combining PE + MP libraries:
-```{r}
+```{shell}
 ../2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
   --PEinsert 221 --ref ../reference.fna \
   --MPFile cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz --MPinsert 4295 
