@@ -1,0 +1,34 @@
+#############################################################################
+############################## SEQuel README ################################
+#############################################################################
+
+SEQuel is a positional reassembly tool for correcting errors in NGS-based assemblies.
+
+GENERAL USAGE:
+    1) prep.pl to pre-process the data (aligns reads to contigs using BWA and 
+       prepares the input-dir for SEQuel).
+    2) SEQuel.jar to correct errors in all contigs in input dir using positional 
+       reassembly.
+
+NOTES:
+    1) prior to running prep.pl, the bwa executable (v0.6.*) must either be 
+       placed in the user's PATH, or passed as a parameter to prep.pl.
+    2) prior to running SEQuel.jar, the blat executable (v.31x1 or higher) and 
+       blat_wrapper.pl script must either be placed in PATH, or passed as
+       parameters in the configuration file to SEQuel.jar.
+
+For more details see our manual page at: http://bix.ucsd.edu/SEQuel/man.html
+
+#############################################################################
+############################## Config File ##################################
+#############################################################################
+
+CONFIG FILE:
+    The config file option (-C FILE) of SEQuel.jar should be used in cases where the 
+    user can not or does not desire to place 'blat' and/or 'blat_wrapper.pl' in PATH.
+    The file should be a TAB separated file with two fields per line: key & value. 
+    The necessary keys are BLAT and BLATW, where the value for BLAT should be the 
+    full path of the 'blat' executable, and the value for BLATW should be the full 
+    path to the 'blat_wrapper.pl' script.
+		
+

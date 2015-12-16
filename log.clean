@@ -1,0 +1,89 @@
+# input_folder=test_cp/ reference=reference.fna
+# TRIM5=3 TRIM3=3 MINREADLENGTH=60 MINSURVIVALRATE=50
+
+> cp-testMP
+PASS	Basic Statistics	cp-testMP.gz
+PASS	Per base sequence quality	cp-testMP.gz
+PASS	Per sequence quality scores	cp-testMP.gz
+WARN	Per base sequence content	cp-testMP.gz
+PASS	Per base GC content	cp-testMP.gz
+PASS	Per sequence GC content	cp-testMP.gz
+PASS	Per base N content	cp-testMP.gz
+PASS	Sequence Length Distribution	cp-testMP.gz
+PASS	Sequence Duplication Levels	cp-testMP.gz
+WARN	Overrepresented sequences	cp-testMP.gz
+WARN	Kmer Content	cp-testMP.gz
+# Encoding=Illumina 1.5	(_p64) Total Sequences=10000
+Input Reads: 10000 Surviving: 9871 (98.71%) Dropped: 129 (1.29%)
+TrimmomaticSE: Started with arguments: -threads 4 -phred64 cp-testMP.wind15_28.fastq cp-testMP.wind15_28.3crop70.fastq CROP:70 HEADCROP:3
+Input Reads: 9871 Surviving: 9871 (100.00%) Dropped: 0 (0.00%)
+TrimmomaticSE: Completed successfully
+Input Reads: 9871 Surviving: 9439 (95.62%) Dropped: 432 (4.38%)
+PASS	Basic Statistics	cp-testMP.wind15_28.3crop70.mlen60.fastq
+PASS	Per base sequence quality	cp-testMP.wind15_28.3crop70.mlen60.fastq
+PASS	Per sequence quality scores	cp-testMP.wind15_28.3crop70.mlen60.fastq
+WARN	Per base sequence content	cp-testMP.wind15_28.3crop70.mlen60.fastq
+PASS	Per base GC content	cp-testMP.wind15_28.3crop70.mlen60.fastq
+PASS	Per sequence GC content	cp-testMP.wind15_28.3crop70.mlen60.fastq
+PASS	Per base N content	cp-testMP.wind15_28.3crop70.mlen60.fastq
+WARN	Sequence Length Distribution	cp-testMP.wind15_28.3crop70.mlen60.fastq
+PASS	Sequence Duplication Levels	cp-testMP.wind15_28.3crop70.mlen60.fastq
+PASS	Overrepresented sequences	cp-testMP.wind15_28.3crop70.mlen60.fastq
+WARN	Kmer Content	cp-testMP.wind15_28.3crop70.mlen60.fastq
+# first quality encoding: 100 , 104 , 104         [Sanger range: 33,73]
+# total pairs of reads = 4340 total single reads = 759
+
+# WARNING: too few clean pairs of reads (4340)
+# WARNING: at least 0.25M are required to assemble chloroplasts
+
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (3, 982, 1542, 1)
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] mean and std.dev: (242.97, 102.17)
+[M::mem_pestat] analyzing insert size distribution for orientation RF...
+[M::mem_pestat] mean and std.dev: (4295.16, 435.15)
+
+# most frequent orientation=RF insert size=4295
+
+# fixed file: test_cp//cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz
+> cp-testPE
+PASS	Basic Statistics	cp-testPE.gz
+FAIL	Per base sequence quality	cp-testPE.gz
+PASS	Per sequence quality scores	cp-testPE.gz
+WARN	Per base sequence content	cp-testPE.gz
+PASS	Per base GC content	cp-testPE.gz
+PASS	Per sequence GC content	cp-testPE.gz
+FAIL	Per base N content	cp-testPE.gz
+PASS	Sequence Length Distribution	cp-testPE.gz
+PASS	Sequence Duplication Levels	cp-testPE.gz
+WARN	Overrepresented sequences	cp-testPE.gz
+WARN	Kmer Content	cp-testPE.gz
+# Encoding=Illumina 1.5	(_p64) Total Sequences=10000
+Input Reads: 10000 Surviving: 9816 (98.16%) Dropped: 184 (1.84%)
+TrimmomaticSE: Started with arguments: -threads 4 -phred64 cp-testPE.wind15_28.fastq cp-testPE.wind15_28.3crop70.fastq CROP:70 HEADCROP:3
+Input Reads: 9816 Surviving: 9816 (100.00%) Dropped: 0 (0.00%)
+TrimmomaticSE: Completed successfully
+Input Reads: 9816 Surviving: 7400 (75.39%) Dropped: 2416 (24.61%)
+PASS	Basic Statistics	cp-testPE.wind15_28.3crop70.mlen60.fastq
+PASS	Per base sequence quality	cp-testPE.wind15_28.3crop70.mlen60.fastq
+PASS	Per sequence quality scores	cp-testPE.wind15_28.3crop70.mlen60.fastq
+WARN	Per base sequence content	cp-testPE.wind15_28.3crop70.mlen60.fastq
+PASS	Per base GC content	cp-testPE.wind15_28.3crop70.mlen60.fastq
+PASS	Per sequence GC content	cp-testPE.wind15_28.3crop70.mlen60.fastq
+PASS	Per base N content	cp-testPE.wind15_28.3crop70.mlen60.fastq
+WARN	Sequence Length Distribution	cp-testPE.wind15_28.3crop70.mlen60.fastq
+PASS	Sequence Duplication Levels	cp-testPE.wind15_28.3crop70.mlen60.fastq
+PASS	Overrepresented sequences	cp-testPE.wind15_28.3crop70.mlen60.fastq
+FAIL	Kmer Content	cp-testPE.wind15_28.3crop70.mlen60.fastq
+# first quality encoding: 83 , 96 , 98         [Sanger range: 33,73]
+# total pairs of reads = 2934 total single reads = 1532
+
+# WARNING: too few clean pairs of reads (2934)
+# WARNING: at least 0.25M are required to assemble chloroplasts
+
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 2110, 0, 0)
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] mean and std.dev: (221.30, 29.34)
+
+# most frequent orientation=FR insert size=221
+
+# fixed file: test_cp//cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz

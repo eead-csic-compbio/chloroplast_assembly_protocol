@@ -1,0 +1,80 @@
+# Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
+# 1) Estacion Experimental de Aula Dei-CSIC, Zaragoza, Spain
+# 2) Escuela Politécnica Superior de Huesca, U.Zaragoza, Spain
+# 3) Fundacion ARAID, Zaragoza, Spain
+
+# This file contains three recipes to analyze and validate assemblies.
+
+# For simplicity recipes assume that the assembly is contained on a FASTA file named 'assembly.fna'
+
+
+## recipe 1) quickly check how an assembly compares to a reference chloroplast 
+
+# 1.0) pre-requisites:
+BLAST+ [ftp://ftp.ncbi.nlm.nih.gov/blast/executables/release/LATEST/]
+
+# 1.1) format reference for blastn
+ncbi-blast-2.2.28+/bin/makeblastdb -in reference.fna -dbtype nucl
+ 
+# 1.2) run blastn to do the comparison, see lines below for expected output 
+ncbi-blast-2.2.28+/bin/blastn -query assembly.fna -db reference.fna -outfmt 6 \
+	-task megablast -evalue 1e-20 | sort -k 1,1 -k 9,9n | column -t
+  
+#scaffold1|size79711  gi|193075536|gb|EU325680.1|  99.64   5902   11  9   56     5950   4       5902    0.0    1.077e+04
+#scaffold1|size79711  gi|193075536|gb|EU325680.1|  99.70   29828  36  23  5943   35758  5988    35774   0.0    5.454e+04
+#scaffold1|size79711  gi|193075536|gb|EU325680.1|  99.74   43747  55  36  35728  79435  35775   79502   0.0    8.011e+04
+#scaffold1|size79711  gi|193075536|gb|EU325680.1|  100.00  55     0   0   79381  79435  135199  135145  1e-21  102
+#scaffold2|size34209  gi|193075536|gb|EU325680.1|  99.94   21536  8   4   1      21535  79457   100989  0.0    3.970e+04
+#scaffold2|size34209  gi|193075536|gb|EU325680.1|  98.89   90     1   0   34120  34209  101033  100944  9e-40  161
+#scaffold2|size34209  gi|193075536|gb|EU325680.1|  99.88   34145  28  11  1      34140  135190  101055  0.0    6.281e+04
+
+
+## recipe 2) check whether scaffold ends overlap, suggesting they could be merged 
+# perfect matches (100.00) of length KMER-1 are the relevant evidence 
+
+perl -lne 'if(/^(>.*)/){$h=$1}else{$fa{$h}.=$_} END{ foreach $h (sort(keys(%fa))){ print $h."|first100\n".substr($fa{$h},0,100)."\n$h"."|last100\n".substr($fa{$h},-100) }}' \
+	assembly.fna > scaffolds.ends.fna
+	
+ncbi-blast-2.2.28+/bin/blastn -query scaffolds.ends.fna -subject scaffolds.ends.fna \
+	-outfmt "6 qseqid sseqid length pident mismatch gapopen qstart qend sstart send qseq sseq" | \
+	perl -lane 'next if($F[0] eq $F[1]); print' > scaffolds.ends.blast
+
+#scaffold1|size79711|first100	scaffold2|size34209|first100	46	100.00	0	0	1	46	46	1	CGTTAACTGAATTCAGAATAGAAAGATTC
+#AGAATAAAAAAAAGATG	CGTTAACTGAATTCAGAATAGAAAGATTCAGAATAAAAAAAAGATG
+#scaffold1|size79711|last100	scaffold2|size34209|first100	46	100.00	0	0	55	100	1	46	CATCTTTTTTTTATTCTGAATCTTTCTAT
+#TCTGAATTCAGTTAACG	CATCTTTTTTTTATTCTGAATCTTTCTATTCTGAATTCAGTTAACG
+#scaffold2|size34209|first100	scaffold1|size79711|first100	46	100.00	0	0	1	46	46	1	CATCTTTTTTTTATTCTGAATCTTTCTAT
+#TCTGAATTCAGTTAACG	CATCTTTTTTTTATTCTGAATCTTTCTATTCTGAATTCAGTTAACG
+#scaffold2|size34209|first100	scaffold1|size79711|last100	46	100.00	0	0	1	46	55	100	CATCTTTTTTTTATTCTGAATCTTTCTAT
+#TCTGAATTCAGTTAACG	CATCTTTTTTTTATTCTGAATCTTTCTATTCTGAATTCAGTTAACG
+
+
+## recipe 3) prepare reads + assembly for visual inspection 
+
+# 3.1) format assembly in 60 columns width (otherwise igv might complain)
+perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. != 1) {print "\n"} s/ |$/\t/; $count++; $_ .= "\t";} else {s/ //g; $len += length($_)} print $_;}' assembly.fna > assembly.tab
+perl -e '$len=0; while(<>) {s/\r?\n//; @F=split /\t/, $_; print ">$F[0]"; if (length($F[1])) {print " $F[1]"} print "\n"; $s=$F[2]; $len+= length($s); $s=~s/.{60}(?=.)/$&\n/g; print "$s\n";}' assembly.tab > assembly60.fna
+rm -f aasembly.tab
+
+# 3.2) index assembly for bwa
+bin/bwa-0.7.6a/bwa index assembly.fna
+
+# 3.3) map paired reads over assembly 
+# if qualities are illumina 1.5-encoded, then they should be converted to sanger-encoding  
+#perl -lne 'tr/\x40-\xff\x00-\x3f/\x21-\xe0\x21/ if($.%4==0); print' cp-reads.corr.12.fq > cp-reads.corr.12.sanger.fq
+
+# 3.4) BWA mem (for reads with length > 70b) with 4 threads + SW
+bin/bwa-0.7.6a/bwa mem -t 4 -p -P -M assembly.fna cp-reads.corr.12.fq.gz > map.bwa_mem_pe.sam 2> map.bwa_mem_pe.log
+
+# 3.5) convert to BAM and sort
+bin/samtools-0.1.19/samtools view -bS -o map.bwa_mem_pe.bam map.bwa_mem_pe.sam
+bin/samtools-0.1.19/samtools sort map.bwa_mem_pe.bam map.bwa_mem_pe.sorted
+
+# 3.6) filter duplicates
+samtools rmdup map.bwa_mem_pe.sorted.bam map.bwa_mem_pe.sorted.rmdup.bam
+
+# 3.7) index filtered bam
+samtools index map.bwa_mem_pe.sorted.rmdup.bam map.bwa_mem_pe.sorted.rmdup.bam.bai
+
+# 3.8) display with igv or simialr software [https://www.broadinstitute.org/igv/]
+

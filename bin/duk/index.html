@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="verify-v1" content="6wo51xu6ARUrklKNbMeXjgoTCvR8I3C7/IESIFp0t10=">
+<link rel="stylesheet" type="text/css" href="style.css">
+<style type="text/css">
+ol, ul { margin: 0.5em; }
+li { margin: 0; }
+</style><title>DUK</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<div id="wrap">
+<div id="header">
+<h1>DUK</h1>
+</div>
+<div id="menu">
+<ul>
+<li><a href="index.htm">Home</a></li>
+</ul>
+</div>
+<div id="sidebar">
+<h3>DUK</h3>
+<ul>
+<li><a href="http://sourceforge.net/projects/duk/">SF
+project page</a> </li>
+<li><a href="https://sourceforge.net/projects/duk/files/">SF
+download page</a> </li>
+</ul>
+<br>
+<h3>Links:</h3>
+<ul>
+<li><a href="http://www.jgi.doe.gov/">JGI</a>
+</li>
+</ul>
+</div>
+<div id="main">
+<br>
+<h2>Introduction</h2>
+<p> Duk is a fast, accurate,and memory efficent DNA sequence
+matching tool. It finds whether a query sequence partially or totally
+matches given reference sequences or not, but it does not give how a
+query matches a reference sequence. The common application is to group
+sequencing reads into small manageable chunks for downstream analysis
+in assessing quality of a sequencing run, which includes contaminant
+removal (with contaminant sequences known), organelle genome
+separation, and assembly refinement. </p>
+<p> It uses Kmer hashing method to index reference sequences and
+Poisson model to calculate a p-value to estimate the reliability of
+matches. DUK is implemented in C++ using object oriented design.
+</p>
+<br>
+<dl>
+<dt>Requirement </dt>
+<dd> Duk should run in any 64 bit Linux/Unix machine with g++. </dd>
+<dt>Compile Instruction</dt>
+<dd> Just type make to compile the tool.
+<p> &gt;make </p>
+</dd>
+<dt>Manual</dt>
+<dd> duk [options] ref.fa query&nbsp;</dd>
+<dd>OPTIONS:&nbsp;&nbsp;
+<p>&nbsp;-o, -output <file> print log information
+to file, default is stdout.</file></p></dd><dd><p><file>&nbsp;-n, -nomatch <file> output the not
+matched reads to file, the opton value - stands for standard output</file></file></p></dd><dd><p><file><file>-m,
+-match <file> output matched reads to file.</file></file></file></p></dd><dd><p><file><file><file>&nbsp;-k, -kmer the k mer
+size, default is 16.&nbsp;</file></file></file></p></dd><dd><p><file><file><file>-s, -step the step size, default is 4.&nbsp;</file></file></file></p></dd><dd><p><file><file><file>-c, -cutoff
+the cut off threshold for matched reads, default is 1.</file></file></file></p></dd><dd><p><file><file><file>&nbsp;-h, -help print
+out the help information</file></file></file></p></dd><dd><file><file><file>&nbsp;Identify the reads in query file whether they
+match to ref.fa reads. The ref.fa must be in fasta format and the query
+can be in fastq or fasta format. If there is no query file, the tool
+gets reads from standard input k=16 and c=1 are recommended for small
+genome like bacteria or adapter removal tasks. k=20 and c=2 are
+recommended for large genome such as plant. Example: ./duk
+Illumina.Artifacts.fa sample.fastq </file></file></file></dd><dd>
+</dd>
+
+<dt>License
+</dt>
+<dd> The full DUK package is distributed under FreeBSD License.
+</dd>
+
+</dl>
+</div>
+<br>
+<div style="clear: both;"> </div>
+<div id="footer">
+<hr>
+<p style="text-align: right;">Last modified: 2010-02-28</p>
+</div>
+<br>
+</div>
+</body></html>

@@ -1,0 +1,9 @@
+Musket is a multistage k-mer spectrum based error corrector for Illumina sequence data.
+
+All information about the software is available at the homepage
+
+	http://musket.sourceforge.net
+
+
+Thrid-party open-source software used in this software:
+(1) goole sparsehash: http://code.google.com/p/sparsehash/

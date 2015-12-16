@@ -1,0 +1,7 @@
+Ejemplos:
+duk -m matchrds.fq -n nomatchrds.fq ref.fa query.fq â
+cat query.fq | duk -k 20 -c 2 -n - ref.fa > nomatchedRds.fq
+
+Parameter Recommendations:
+-k=16 and c=1 for adapter removal
+-k>=20 and c=2 for organelle read separation or when a reference sequence has high diversity (ex. Metagenomic sequence)

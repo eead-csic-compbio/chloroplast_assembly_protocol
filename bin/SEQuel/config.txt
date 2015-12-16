@@ -1,0 +1,2 @@
+BLAST	/home/contrera/soft/blat/blat
+BLATW	/home/contrera/soft/SEQuel/blat_wrapper.pl
