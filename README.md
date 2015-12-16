@@ -14,7 +14,7 @@ Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
 
 ## Software dependencies
 
-The following software packages, bundled with the scripts and located in bin/, are required for the protocol:
+The following software packages, pre-compiled with the scripts and located in bin/, are required for the protocol. They should work out-of-the-box in Linux x86_64 systems, but should be re-compiled otherwise. They haven't been tested under Windows:
 
 | Name | shipped version | Source |
 |:-----|:---------------:|:-------|
