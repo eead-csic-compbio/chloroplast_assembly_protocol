@@ -1,6 +1,3 @@
----
-output: html_document
----
 # chloroplast_assembly_protocol
 
 A set of scripts for the assembly of chloroplast genomes out of whole-genome sequencing reads
@@ -31,7 +28,7 @@ The following software packages, pre-compiled with the scripts and located in bi
 
 ## Examples
 
-* Fish cp reads from whole genome library, using provided test reads:
+* Fish chloroplast (cp) reads from whole genome library, using provided test reads:
 ```{shell}
 ./0_get_cp_reads.pl test/ test_cp/ 
 ```    
