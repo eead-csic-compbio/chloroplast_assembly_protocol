@@ -11,7 +11,13 @@ Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
 
 ## Software dependencies
 
-The following software packages, pre-compiled with the scripts and located in bin/, are required for the protocol. They should work out-of-the-box in Linux x86_64 systems, but should be re-compiled otherwise. They haven't been tested under Windows:
+This protocol has been tested on Linux x86_64 systems, although it also work on Mac-OSX settings. It requires perl, which should be installed on all Linux environments, plus some third-party programs listed below, which are provided pre-compiled. In order to check whether they work on your machine, or to re-compile them otherwise, for instance on Mac-OSX, please run on the terminal:
+```{shell}  
+perl ./install.pl
+```
+The script will tell which programs are set up (OK) and which require installing a compiler (gcc or g++) or java in order to run.
+
+This is the full list of software, located in bin/, required for the protocol:
 
 | Name | shipped version | Source |
 |:-----|:---------------:|:-------|
@@ -25,6 +31,8 @@ The following software packages, pre-compiled with the scripts and located in bi
 | GapFiller | v1-11 | <http://www.baseclear.com/bioinformatics-tools> |
 | seqtk | | <https://github.com/lh3/seqtk> |
 | split_pairs | 0.5 | this site, uses seqtk code |
+
+Optionally [samtools](http://samtools.sourceforge.net) is used in [HOWTOcheck_assembly.txt](HOWTOcheck_assembly.txt).
 
 ## Examples
 

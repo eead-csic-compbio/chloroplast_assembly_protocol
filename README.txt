@@ -1,6 +1,6 @@
 # Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
 # 1) Estacion Experimental de Aula Dei-CSIC, Zaragoza, Spain
-# 2) Escuela Politécnica Superior de Huesca, U.Zaragoza, Spain
+# 2) Escuela Polit?cnica Superior de Huesca, U.Zaragoza, Spain
 # 3) Fundacion ARAID, Zaragoza, Spain
 
 # This file explains to use the attached scripts for assemblying chloroplast genomes out of whole-genome reads.
@@ -8,7 +8,14 @@
 0. Software dependencies
 ========================
 
-Name  Shipped version Source
+This protocol has been tested on Linux x86_64 systems, although it also work on Mac-OSX settings. It requires perl, which should be installed on all Linux environments, plus some third-party programs listed below, which are provided pre-compiled. In order to check whether they work on your machine, or to re-compile them otherwise, for instance on Mac-OSX, please run on the terminal:
+
+perl ./install.pl
+
+The script will tell which programs are set up (OK) and which require installing a compiler (gcc or g++) or java in order to run.
+
+This is the full list of software, located in bin/, required for the protocol:
+ 
 DUK March032011 http://duk.sourceforge.net
 Trimmomatic 0.32  http://www.usadellab.org/cms/?page=trimmomatic
 FastQC  V0.10.1 http://www.bioinformatics.babraham.ac.uk/projects/fastqc
@@ -20,6 +27,9 @@ GapFiller v1-11 http://www.baseclear.com/bioinformatics-tools
 seqtk NA  https://github.com/lh3/seqtk
 split_pairs v0.5  [this site, uses seqtk code]
 
+Optionally samtools is used in 'HOWTOcheck_assembly.txt':
+
+samtools 0.1.19 [http://samtools.sourceforge.net]
 
 1. Test run
 ===========
