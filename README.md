@@ -1,4 +1,4 @@
-# chloroplast_assembly_protocol
+# Chloroplast assembly protocol
 
 A set of scripts for the assembly of chloroplast genomes out of whole-genome sequencing reads
 
@@ -34,9 +34,15 @@ This is the full list of software, located in bin/, required for the protocol:
 
 Optionally [samtools](http://samtools.sourceforge.net) is used in [HOWTOcheck_assembly.txt](HOWTOcheck_assembly.txt).
 
+## Reference sequences
+
+* [poaceae.fna](poaceae.fna) is a FASTA file containing chloroplast (cp) genomes of several representative Poaceae species which provide DNA k-mers that help fishing out cp reads out of whole-genome read sets. It is used by [0_get_cp_reads.pl](0_get_cp_reads.pl). This file should be adapted to the particular phylogenetic group under study.
+
+* [reference.fna](reference.fna) is required by this protocol, and it should contain the cp genome of a related species.
+
 ## Examples
 
-* Fish chloroplast (cp) reads from whole genome library, using provided test reads:
+* Fish cp reads from whole genome library, using provided test reads:
 ```{shell}
 ./0_get_cp_reads.pl test/ test_cp/ 
 ```    
