@@ -69,3 +69,27 @@ cd test_cp
 ## Post-assembly inspection
 
 The tutorial [HOWTOcheck_assembly.txt](HOWTOcheck_assembly.txt) contains recipes to analyze and validate your assemblies.
+
+
+## Propagation of annotated features to assemblies
+
+If a good quality master annotation in GenBank format is at hand, it can be used to propagate 
+its features to several assembled chloroplast genomes with accompanying script [_annot_fasta_from_gbk.pl](_annot_fasta_from_gbk.pl).
+The way to invoke it is as follows, assuming strain XYZ was assembled:
+```{shell}
+perl _annot_fasta_from_gbk.pl reference.gbk assembly.fa XYZ_chloroplast.gbk XYZ
+```
+
+__NOTE__: This script requires setting a valid path to BLAST+ binaries installed on your system, plus [Bioperl](http://www.bioperl.org/wiki/Main_Page) installed on your system.
+
+
+
+## Generating tracks from aligned assemblies
+
+If several chloroplast assemblies are aligned they can then be further used to produce tracks for software
+[CIRCOS](http://circos.ca). Script [_check_matrix.pl](_check_matrix.pl) does just that; it requires setting a reference strain 
+and a window size, please check the code. An example call would be:
+
+```{shell}
+perl _check_matrix.pl chloroplast_alignment.fna
+```

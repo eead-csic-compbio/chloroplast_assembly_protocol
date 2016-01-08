@@ -3,16 +3,22 @@
 # 2) Escuela Polit?cnica Superior de Huesca, U.Zaragoza, Spain
 # 3) Fundacion ARAID, Zaragoza, Spain
 
-# This file explains to use the attached scripts for assemblying chloroplast genomes out of whole-genome reads.
+# This file explains to use the attached scripts for assemblying chloroplast genomes 
+out of whole-genome reads.
 
 0. Software dependencies
 ========================
 
-This protocol has been tested on Linux x86_64 systems, although it also work on Mac-OSX settings. It requires perl, which should be installed on all Linux environments, plus some third-party programs listed below, which are provided pre-compiled. In order to check whether they work on your machine, or to re-compile them otherwise, for instance on Mac-OSX, please run on the terminal:
+This protocol has been tested on Linux x86_64 systems, although it also work on Mac-OSX 
+settings. It requires perl, which should be installed on all Linux environments, plus 
+some third-party programs listed below, which are provided pre-compiled. In order to check 
+whether they work on your machine, or to re-compile them otherwise, for instance on 
+Mac-OSX, please run on the terminal:
 
 perl ./install.pl
 
-The script will tell which programs are set up (OK) and which require installing a compiler (gcc or g++) or java in order to run.
+The script will tell which programs are set up (OK) and which require installing a compiler 
+(gcc or g++) or java in order to run.
 
 This is the full list of software, located in bin/, required for the protocol:
  
@@ -58,6 +64,28 @@ cd test_cp
 2. Post-assembly inspection
 ===========================
 
-The attached tutorial 'HOWTOcheck_assembly.txt' contains recipes to analyze and validate your assemblies.
+The attached tutorial 'HOWTOcheck_assembly.txt' contains recipes to analyze and validate your 
+assemblies.
 
 
+
+3. Propagation of annotated features to assemblies
+==================================================
+
+If a good quality master annotation in GenBank format is at hand, it can be used to propagate 
+its features to several assembled chloroplast genomes with accompanying script _annot_fasta_from_gbk.pl .
+The way to invoke is as follows, assuming strain XYZ was assembled:
+
+perl _annot_fasta_from_gbk.pl reference.gbk assembly.fa XYZ_chloroplast.gbk XYZ
+
+NOTE: This script requires setting a valid path to BLAST+ binaries installed on your system.
+
+
+
+4. Generating tracks from aligned assemblies
+============================================
+
+If several chloroplast assemblies are aligned they can then be further used to produce tracks for software CIRCOS <http://circos.ca>. Script _check_matrix.pl does just that; it requires setting a reference strain 
+and a window size, please check the code. An example call would be:
+
+perl _check_matrix.pl chloroplast_alignment.fna
