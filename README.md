@@ -30,7 +30,7 @@ This is the full list of software, located in bin/, required for the protocol:
 | SSPACE | 2.0 | <http://www.baseclear.com/bioinformatics-tools> |
 | GapFiller | v1-11 | <http://www.baseclear.com/bioinformatics-tools> |
 | seqtk | | <https://github.com/lh3/seqtk> |
-| split_pairs | 0.5 | this site, uses seqtk code |
+| split_pairs | 0.5 | <https://github.com/eead-csic-compbio/split_pairs> |
 
 Optionally [samtools](http://samtools.sourceforge.net) is used in [HOWTOcheck_assembly.txt](HOWTOcheck_assembly.txt).
 
@@ -42,24 +42,24 @@ Optionally [samtools](http://samtools.sourceforge.net) is used in [HOWTOcheck_as
 
 ## Examples
 
-* Fish cp reads from whole genome library, using provided test reads:
+* Fish cp reads from whole genome library, using provided test reads (see [flowchart](./pics/0_get_cp_reads_1_cleanreads.png)):
 ```{shell}
 ./0_get_cp_reads.pl test/ test_cp/ 
 ```    
 
-* Clean and trim reads to remove poor quality segments; output includes mean insert sizes and orientations:
+* Clean and trim reads to remove poor quality segments; output includes mean insert sizes and orientations (see [flowchart](./pics/0_get_cp_reads_1_cleanreads.png)):
 ```{shell}  
 ./1_cleanreads.pl test_cp reference.fna 
 ```
 
-* Assemble cp genome from a single PE library:
+* Assemble cp genome from a single PE library (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
 cd test_cp
 ../2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
   --PEinsert 221 --ref ../reference.fna
 ```
 
-* Assemble cp genome combining PE + MP libraries:
+* Assemble cp genome combining PE + MP libraries (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
 ../2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
   --PEinsert 221 --ref ../reference.fna \
