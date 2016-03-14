@@ -36,7 +36,7 @@ my %javasoft = (
   'trimmomatic' => [ "java -jar $BINPATH/Trimmomatic-0.32/trimmomatic-0.32.jar", 'Usage' ]
 );
 
-my ($soft,$path,$output);
+my ($soft,$path,$pathexe,$output);
 my $cwd = getcwd();
 
 print "\n## checking software provided in binary form: \n";
@@ -47,9 +47,15 @@ foreach $soft (keys(%binsoft))
   print "# $soft ($path)\n";
   
   $output = `$binsoft{$soft}[0] 2>&1`;
-  if($output !~ /$binsoft{$soft}[1]/)
+  if($output !~ /$binsoft{$soft}[1]/ )
   {
-    die "<<fail, please obtain binaries suited to your system and place them in $path\n"; 
+    $pathexe = basename($binsoft{$soft}[0]); # it might be in $PATH
+    $output = `$pathexe 2>&1`; 
+    if($output !~ /$binsoft{$soft}[1]/ )
+    {
+      die "<<fail, please obtain binaries suited to your system and place them in $path\n"; 
+    }
+    else{ print ">> OK\n"; }
   }
   else{ print ">> OK\n"; }
 }
@@ -64,17 +70,23 @@ foreach $soft (keys(%Csoft))
   $output = `$Csoft{$soft}[0] 2>&1`;
   if($output !~ /$Csoft{$soft}[1]/)
   {
-    print "\n# compiling $soft in $path (requires gcc compiler) ...\n";
-    chdir($path);
-    if($soft eq 'velvet'){ system("make CATEGORIES=8 MAXKMERLENGTH=201 LONGSEQUENCES=1 2>&1") }
-    else{ system("make 2>&1") }
-    chdir($cwd);
-    
-    $output = `$Csoft{$soft}[0] 2>&1`;
-    if($output !~ /$Csoft{$soft}[1]/)
+    $pathexe = basename($Csoft{$soft}[0]);
+    $output = `$pathexe 2>&1`;
+    if($output !~ /$binsoft{$soft}[1]/ )
     {
-      die "<<fail auto-compiling, please install gcc compiler and/or resolve missing dependencies\n"; 
-    }  
+      print "\n# compiling $soft in $path (requires gcc compiler) ...\n";
+      chdir($path);
+      if($soft eq 'velvet'){ system("make CATEGORIES=8 MAXKMERLENGTH=201 LONGSEQUENCES=1 2>&1") }
+      else{ system("make clean; make 2>&1") }
+      chdir($cwd);
+    
+      $output = `$Csoft{$soft}[0] 2>&1`;
+      if($output !~ /$Csoft{$soft}[1]/)
+      {
+        die "<<fail auto-compiling, please install gcc compiler and/or resolve missing dependencies\n"; 
+      }
+    }
+    else{ print ">> OK\n"; }  
   }
   else{ print ">> OK\n"; }
 }
@@ -91,7 +103,7 @@ foreach $soft (keys(%CPPsoft))
   {
     print "\n# compiling $soft in $path (requires g++ compiler) ...\n";
     chdir($path);
-    system("make 2>&1");
+    system("make clean; make 2>&1");
     chdir($cwd);
     
     $output = `$CPPsoft{$soft}[0] 2>&1`;
