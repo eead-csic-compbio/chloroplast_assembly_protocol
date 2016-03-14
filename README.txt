@@ -9,7 +9,7 @@ out of whole-genome reads.
 0. Software dependencies
 ========================
 
-This protocol has been tested on Linux x86_64 systems, although it also work on Mac-OSX 
+This protocol has been tested on Linux x86_64 systems, although it should also work on Mac-OSX 
 settings. It requires perl, which should be installed on all Linux environments, plus 
 some third-party programs listed below, which are provided pre-compiled. In order to check 
 whether they work on your machine, or to re-compile them otherwise, for instance on 
