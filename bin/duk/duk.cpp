@@ -7,6 +7,7 @@
 #include "sys/time.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 #include "seqfiles.h"
 #include "kmercoder.h"
 #include "kmerhash.h"

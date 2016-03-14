@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <getopt.h>
+#include <stdlib.h>
 #include "sys/time.h"
 using namespace std;
 
