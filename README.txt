@@ -49,13 +49,13 @@ samtools 0.1.19 [http://samtools.sourceforge.net]
 
 # assemble cp genome from a single PE library
 cd test_cp
-../2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
+./2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
   --PEinsert 221 --ref ../reference.fna
   
 # assemble cp genome combining PE + MP libraries
-../2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
+./2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
   --PEinsert 221 --ref ../reference.fna \
-  --MPFile cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz --MPinsert 4295 
+  --MPfile cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz --MPinsert 4295 
   
   
   
