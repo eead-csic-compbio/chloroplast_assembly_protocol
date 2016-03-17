@@ -337,7 +337,7 @@ if($gapsOK)
 	print PARAMS "lib1 bowtie $pair1file $pair2file $PEinsert 0.2 FR\n";
   if($MPfile)
   {
-    print PARAMS "lib2 bowtie $pair1fileMP $pair2fileMP $MPinsert 0.2 FR\n"; 
+    print PARAMS "lib2 bowtie $pair1fileMP $pair2fileMP $MPinsert 0.2 $MPorient\n"; 
   }
 	close(PARAMS);
 
