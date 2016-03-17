@@ -5,9 +5,9 @@ A set of scripts for the assembly of chloroplast genomes out of whole-genome seq
 **Authors**
 Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
 
-1) Estación Experimental de Aula Dei-CSIC, Zaragoza, Spain
-2) Escuela Politécnica Superior de Huesca, U.Zaragoza, Spain
-3) Fundación ARAID, Zaragoza, Spain
+1. Estación Experimental de Aula Dei-CSIC, Zaragoza, Spain
+2. Escuela Politécnica Superior de Huesca, U.Zaragoza, Spain
+3. Fundación ARAID, Zaragoza, Spain
 
 ## Software dependencies
 
