@@ -34,6 +34,13 @@ This is the full list of software, located in bin/, required for the protocol:
 
 Optionally [samtools](http://samtools.sourceforge.net) is used in [HOWTOcheck_assembly.txt](HOWTOcheck_assembly.txt).
 
+## Input reads
+
+This pipeline has been tested with paired-end (PE) and mate-pairs (MP) read libraries,
+with the following FASTQ quality encodings: Illumina 1.5 (Phred+64) and Sanger/Illumina (Phred+33). 
+The code assumes that PE libraries have FR orientation, meaning that read pairs are "--><--". 
+MP libraries are expected to be RF but can be set to FR as well.
+
 ## Reference sequences
 
 * [poaceae.fna](poaceae.fna) is a FASTA file containing chloroplast (cp) genomes of several representative Poaceae species which provide DNA k-mers that help fishing out cp reads out of whole-genome read sets. It is used by [0_get_cp_reads.pl](0_get_cp_reads.pl). This file should be adapted to the particular phylogenetic group under study.
