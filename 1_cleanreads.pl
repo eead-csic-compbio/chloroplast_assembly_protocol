@@ -1,7 +1,7 @@
 #!/usr/bin/perl 
 
 # Script that cleans reads to be used for chloroplast genome assembly
-# Uses a eeference genome; should be from a species as close as possible to the target species 
+# Uses a reference genome; should be from a species as close as possible to the target species 
 
 #Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
 #1) Estacion Experimental de Aula Dei-CSIC, Zaragoza, Spain
@@ -29,20 +29,20 @@ my $SPLITPAIRSEXE = $BINPATH.'/split_pairs_v0.5/split_pairs.pl';
 my $MUSKETEXE     = $BINPATH.'/musket-1.0.6/musket';
 my $BWAEXE        = $BINPATH.'/bwa-0.7.6a/bwa';
 
-my ($inpDIR,$refFASTA);
+my ($inpDIR,$refFASTA,$skipCorr);
 
-if(!$ARGV[1]){ die "# usage: $_ <folder with reads, results will be added there> <reference FASTA genome>\n"; }
+if(!$ARGV[1]){ die "# usage: $_ <folder with reads, results will be added there> <reference FASTA genome OR \"noref\">\n"; }
 else
 { 
-  ($inpDIR,$refFASTA) = (@ARGV);
+  ($inpDIR,$refFASTA,$skipCorr) = (@ARGV);
   print "# input_folder=$inpDIR reference=$refFASTA\n";
   print "# TRIM5=$TRIM5 TRIM3=$TRIM3 MINREADLENGTH=$MINREADLENGTH MINSURVIVALRATE=$MINSURVIVALRATE\n\n"; 
 }
 
-my ($inpDIR) = (@ARGV);
-my ($encoding,$readlength,$N,$trimtype,$trimover,$minlength,@trash,$insert);
-my ($readf,$gzfile,$outFQfile,$outFQsumfile,$outFQzipfile,$root,$orient);
-my ($outFQfile2,$outFQsumfile2,$outFQzipfile2,$FQreportsDIR,$trimmedfile);
+#my ($inpDIR) = (@ARGV);
+my ($encoding,$readlength,$N,$trimtype,$trimover,$minlength,@trash,$insert,$filei);
+my ($readf,$gzfile,$outFQfile,$outFQsumfile,$outFQzipfile,$root,$orient,$insSize,$origFilename);
+my ($outFQfile2,$outFQsumfile2,$outFQzipfile2,$FQreportsDIR,$trimmedfile,$finalFile);
 
 $FQreportsDIR = $inpDIR.'/reports/';
 mkdir($FQreportsDIR) if(!-d $FQreportsDIR);
@@ -52,10 +52,15 @@ opendir(READS,$inpDIR);
 my @readfiles = sort grep { !-d "$inpDIR/$_" } grep {!/^\./} grep {!/.corr/} grep {/f[ast]*q.gz/} readdir(READS);
 closedir(READS); 
 
+open(CLEANREADS,">$inpDIR/cleanreads.txt");
+
 foreach $readf (@readfiles)
 {
+$filei+=1;
+  # print input filename (root) and define output filenames
 	$gzfile = $readf; $gzfile =~ s/\.fastq//; 
 	$root = $gzfile; $root =~ s/\.gz//;
+	$origFilename = $root; $origFilename =~ s/^cp-//;
 	$outFQfile = $FQreportsDIR."/$gzfile"; $outFQfile =~ s/\.gz$/_fastqc\/fastqc_data.txt/;
 	$outFQsumfile = $FQreportsDIR."/$gzfile"; $outFQsumfile =~ s/\.gz$/_fastqc\/summary.txt/;
 	$outFQzipfile = $FQreportsDIR."/$gzfile"; $outFQzipfile =~ s/\.gz$/_fastqc.zip/;
@@ -203,8 +208,9 @@ foreach $readf (@readfiles)
 	}
   
   # correct bona fide sequencing errors
-  if(!-s "$trimmedfile.corr.fq")
+  if(!-s "$trimmedfile.corr.12.fq" && $skipCorr!="-n")
   {
+	print "# Running Musket error correction...\n";
       open(MUSKET,"$MUSKETEXE $trimmedfile.12.fq -o $trimmedfile.corr.12.fq -lowercase -inorder -p $CPUTHREADS|")
           || die "# cannot run $MUSKETEXE $trimmedfile.12.fq -o $trimmedfile.corr.12.fq -lowercase -inorder -p $CPUTHREADS\n";
       while(<MUSKET>)
@@ -213,22 +219,32 @@ foreach $readf (@readfiles)
       }
       close(MUSKET);
       push(@trash,"$trimmedfile.12.fq");
+
+      $finalFile="$trimmedfile.corr.12.fq";
+  } else {
+	print "# Musket error correction skipped.\n";
+      $finalFile="$trimmedfile.12.fq";
   }
 
+  $insSize="nd";
+  $orient="nd";
+
+  if($refFASTA ne "noref"){
+
 	# extract sample pairs (for instance 100K)
-  my $headlines = sprintf("-%d",4*$READSAMPLESIZE);
-	system("head $headlines $trimmedfile.corr.12.fq > $trimmedfile.12.100K.fq") if(!-s "$trimmedfile.12.100K.fq"); 
+	my $headlines = sprintf("-%d",4*$READSAMPLESIZE);
+	system("head $headlines $finalFile > $trimmedfile.12.100K.fq") if(!-s "$trimmedfile.12.100K.fq"); 
 
 	# estimate insert size and orientation by mapping against close reference
-  # index reference if required
-  system("$BWAEXE index $refFASTA"); 
+	# index reference if required
+	system("$BWAEXE index $refFASTA"); 
   
 	open(BWA,"$BWAEXE mem -p -t 4 $refFASTA $trimmedfile.12.100K.fq > $trimmedfile.bwa.sam 2> $trimmedfile.bwa.log |")
-		|| die "# cannot run $BWAEXE mem -p -t 4 $refFASTA $trimmedfile.12.100K.fq > $trimmedfile.bwa.sam 2> $trimmedfile.bwa.log\n";
+	|| die "# cannot run $BWAEXE mem -p -t 4 $refFASTA $trimmedfile.12.100K.fq > $trimmedfile.bwa.sam 2> $trimmedfile.bwa.log\n";
 	while(<BWA>){ }
 	close(BWA);
 	push(@trash,"$trimmedfile.12.fq","$trimmedfile.12.100K.fq","$trimmedfile.bwa.sam");
-
+	
 	my $orientOK = 0;
 	open(LOG,"$trimmedfile.bwa.log") || die "# cannot read $trimmedfile.bwa.log\n";
 	while(<LOG>)
@@ -248,24 +264,35 @@ foreach $readf (@readfiles)
 		elsif(/\] mean and std\.dev: \((\S+?), (\S+?)\)/)
 		{ 
 			print;
-			if($orientOK){ $orient = "\n# most frequent orientation=$orient insert size=".int($1)."\n\n"; }
+			$insSize=int($1);
+			#if($orientOK){ $orient = "\n# most frequent orientation=$orient insert size=".$insSize."\n\n"; }
 		}
 	}
 	close(LOG);
 	push(@trash,"$trimmedfile.bwa.log"); 
 
-	if($orient eq ''){ "\n# most frequent orientation=nd insert size=0\n\n"; }
-	print $orient; 
+	#if($orient eq ''){ "\n# most frequent orientation=nd insert size=nd\n\n"; }
+	#print $orient; 
+
+  }
+	print "\n# most frequent orientation=$orient insert size=".$insSize."\n\n";
 
 	# compress and store final trimmed reads
-	system("gzip $trimmedfile.corr.12.fq");
-	system("mv $trimmedfile.corr.12.fq.gz $inpDIR");
+	system("gzip $finalFile");
+	system("mv $finalFile.gz $inpDIR");
 
-    print "# fixed file: $inpDIR/$trimmedfile.corr.12.fq.gz\n";
+	print "Printing cleanreads data...\n";
+	#open(CLEANREADS,">$inpDIR/cleanreads.txt");
+	printf CLEANREADS ("#$filei $origFilename $finalFile.gz $orient $insSize Sanger\n");
+	#close(CLEANREADS);
+
+    print "# fixed file: $inpDIR/$finalFile.gz\n";
 
 	# remove unwanted files if required
 	unlink(@trash);  
 }
+
+close(CLEANREADS);
 
 ###########################
 

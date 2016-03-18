@@ -40,18 +40,18 @@ my $MPencoding = 'Sanger';
 my $outDIR     = ''; 
 my $refFASTA   = '';
 my $help;
-  
+
 usage() if(@ARGV < 1 || 
   !GetOptions(
     'help|h'     => \$help, 
     'ref=s'      => \$refFASTA, 
-    'PEfile=s'   => \$PEfile, 
-    'PEinsert=i' => \$PEinsert,
-    'PEenc=s'    => \$PEencoding,
-    'MPfile=s'   => \$MPfile, 
-    'MPinsert=i' => \$MPinsert,
-    'MPenc=s'    => \$MPencoding,
-    'MPorient=s' => \$MPorient,
+#    'PEfile=s'   => \$PEfile, 
+#    'PEinsert=i' => \$PEinsert,
+#    'PEenc=s'    => \$PEencoding,
+#    'MPfile=s'   => \$MPfile, 
+#    'MPinsert=i' => \$MPinsert,
+#    'MPenc=s'    => \$MPencoding,
+#    'MPorient=s' => \$MPorient,
     'threads=i'  => \$CPUTHREADS,
     'sample=i'   => \$SAMPLESIZE,
     'kmer=i'     => \$KMER,
@@ -59,16 +59,17 @@ usage() if(@ARGV < 1 ||
   
 sub usage
 {
-  print   "\n[options]: \n";
+  print   "./2_assemble_reads.pl WORKING_DIR [Options] \n";
+  print   "\nOptions:\n";
   print   "-h this message\n";
-  print   "--ref      reference genome in FASTA format             (required)\n"; 
-  print   "--PEfile   input pair-end file in FASTQ format          (required)\n"; 
-  print   "--PEinsert mean insert size of PE read pairs [integer]  (required)\n";
-  print   "--PEenc    quality encoding of PE reads [Sanger|1.5]    (optional, default=$PEencoding)\n";
-  print   "--MPfile   input mate-pair file in FASTQ format         (optional)\n"; 
-  print   "--MPinsert mean insert size of MP read pairs [integer]  (optional, required with --MPfile)\n";
-  print   "--MPenc    quality encoding of MP reads [Sanger|1.5]    (optional, default=$MPencoding)\n";
-  print   "--MPorient orientation of MP read pairs [RF|FR]         (optional, default=$MPorient)\n";
+  print   "--ref      reference genome in FASTA format of \"noref\"             (required)\n"; 
+#  print   "--PEfile   input pair-end file in FASTQ format          (required)\n"; 
+#  print   "--PEinsert mean insert size of PE read pairs [integer]  (required)\n";
+#  print   "--PEenc    quality encoding of PE reads [Sanger|1.5]    (optional, default=$PEencoding)\n";
+#  print   "--MPfile   input mate-pair file in FASTQ format         (optional)\n"; 
+#  print   "--MPinsert mean insert size of MP read pairs [integer]  (optional, required with --MPfile)\n";
+#  print   "--MPenc    quality encoding of MP reads [Sanger|1.5]    (optional, default=$MPencoding)\n";
+#  print   "--MPorient orientation of MP read pairs [RF|FR]         (optional, default=$MPorient)\n";
   print   "--threads  number of CPU threads to use                 (optional, default=$CPUTHREADS)\n"; 
   print   "--sample   number of reads to be assembled              (optional, default=$SAMPLESIZE)\n";
   print   "--kmer     k-mer size for Velvet assembler              (optional, default=$KMER)\n"; 
@@ -76,44 +77,67 @@ sub usage
   exit(-1);
 }
 
-if(!$refFASTA || !-s $refFASTA)
+my $workingDIR = $ARGV[0];
+print "WorkingDIR=$workingDIR\n";
+
+my $configname = $ARGV[1];
+my $configfile = "$workingDIR/$configname";
+print "Config file=$configfile\n";
+
+if(!-s $configfile){die "\n# $0 : A config file is needed for the assembly \n\t(see README and $workingDIR/cleanreads.txt)\n";}
+
+if($refFASTA ne "noref" && (!$refFASTA || !-s $refFASTA))
 { die "\n# $0 : need a valid --ref FASTA file, exit\n"; }
 
-if(!$PEfile || !-s $PEfile || !$PEinsert || $PEinsert < 1)
-{ die "\n# $0 : need --PEfile and --PEinsert, exit\n"; }
-elsif($PEfile =~ /mlen(\d+)/)
-{
-  die "\n# $0 : $PEfile might contain reads < $1 b, please choose a smaller kmer\n" if($1 < $KMER);
-}  
+#if(!$PEfile || !-s $PEfile || !$PEinsert || $PEinsert < 1)
+#{ die "\n# $0 : need --PEfile and --PEinsert, exit\n"; }
+#elsif($PEfile =~ /mlen(\d+)/)
+#{
+#  die "\n# $0 : $PEfile might contain reads < $1 b, please choose a smaller kmer\n" if($1 < $KMER);
+#}  
 
-if($MPfile && ( !-s $MPfile || !$MPinsert || $PEinsert < 1) )
-{ die "\n# $0 : --MPfile and/or --MPinsert are not valid, exit\n"; }
+#if($MPfile && ( !-s $MPfile || !$MPinsert || $MPinsert < 1) )
+#{ die "\n# $0 : --MPfile and/or --MPinsert are not valid, exit\n"; }
 
-if(($PEencoding ne 'Sanger' && $PEencoding ne '1.5') || 
-  ($MPencoding ne 'Sanger' && $MPencoding ne '1.5'))
-{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
+#if(($PEencoding ne 'Sanger' && $PEencoding ne '1.5') || 
+#  ($MPencoding ne 'Sanger' && $MPencoding ne '1.5'))
+#{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
 
-if($MPorient ne 'RF' && $MPorient ne 'FR')
-{ die "\n# $0 : valid orientations are: FR|RF, exit\n"; }
+#if($MPorient ne 'RF' && $MPorient ne 'FR')
+#{ die "\n# $0 : valid orientations are: FR|RF, exit\n"; }
 
-if(!$outDIR){ $outDIR = "assembly_kmer$KMER\_sample$SAMPLESIZE" }
+if(!$outDIR){ $outDIR = "$configfile\_kmer$KMER\_sample$SAMPLESIZE" }
 if(!-s $outDIR){ mkdir($outDIR) }
 else{ print "# re-using existing output folder '$outDIR'\n\n"; }
 
-printf("\n# %s --ref %s --PEfile %s --PEinsert %d --PEenc %s \\\n".
-      "#  --MPfile %s --MPinsert %d --MPenc %s --MPorient %s \\\n".
+#printf("\n# %s  --ref %s --PEfile %s --PEinsert %d --PEenc %s \\\n".
+#      "#  --MPfile %s --MPinsert %d --MPenc %s --MPorient %s \\\n".
+#      "#  --threads %d --sample %d --kmer %d --outdir %s\n\n",
+#	$0,$refFASTA,$PEfile,$PEinsert,$PEencoding,
+#  $MPfile,$MPinsert,$MPencoding,$MPorient,
+#  $CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR); 
+
+printf("\n# %s %s --ref %s --PEenc %s \\\n".
+      "#  --MPenc %s \\\n".
       "#  --threads %d --sample %d --kmer %d --outdir %s\n\n",
-	$0,$refFASTA,$PEfile,$PEinsert,$PEencoding,
-  $MPfile,$MPinsert,$MPencoding,$MPorient,
-  $CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR); 
+	$0,$configname,$refFASTA,$PEencoding,
+  $MPencoding,$CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR); 
+
+#open(COMMAND,">$outDIR/command.txt");
+#printf COMMAND ("%s --ref %s --PEfile %s --PEinsert %d --PEenc %s \\\n".
+#      "  --MPfile %s --MPinsert %d --MPenc %s --MPorient %s \\\n".
+#      "  --threads %d --sample %d --kmer %d --outdir %s\n\n",
+#	$0,$refFASTA,$PEfile,$PEinsert,$PEencoding,
+#  $MPfile,$MPinsert,$MPencoding,$MPorient,
+#  $CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR);
+#close(COMMAND);
 
 open(COMMAND,">$outDIR/command.txt");
-printf COMMAND ("%s --ref %s --PEfile %s --PEinsert %d --PEenc %s \\\n".
-      "  --MPfile %s --MPinsert %d --MPenc %s --MPorient %s \\\n".
+printf COMMAND ("%s %s --ref %s --PEenc %s \\\n".
+      "  --MPenc %s \\\n".
       "  --threads %d --sample %d --kmer %d --outdir %s\n\n",
-	$0,$refFASTA,$PEfile,$PEinsert,$PEencoding,
-  $MPfile,$MPinsert,$MPencoding,$MPorient,
-  $CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR);
+	$0,$configname,$refFASTA,$PEencoding,
+  $MPencoding,$CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR);
 close(COMMAND);
       
 #############################################################  
@@ -122,6 +146,60 @@ my ($nlines,$enc,$encMP,$root,$rootMP,$gapsOK,$velvet_cmd,@trash);
 my ($intlfileMP,$pair1fileMP,$pair2fileMP,$samplefileMP,$samfileMP,$logfileMP);
 my ($pair1file,$pair2file,$spaceparamfile,$gapparamfile,$finalfile);
 my ($infile,$samplefile,$samfile,$logfile,$tmpfile,$intlfile);
+
+## -1) Read assembly config file
+my @cleanfiles;
+my ($filei, $filename, $filefinal, $fileorient, $fileinssize, $fileencoding);
+
+print "Reading $configfile...\n";
+open(TMP,$configfile) || die "# cannot read $configfile\n";
+while(<TMP>)
+{
+($filei, $filename, $filefinal, $fileorient, $fileinssize, $fileencoding)=split " ", $_;
+print "$_\n";
+if ($filei eq "#1"){ ## PE mandatory file
+	$PEfile="$workingDIR/$filefinal";
+	if ($fileinssize eq "nd"){
+		if (!$PEinsert || $PEinsert < 1){die "\n# $0 : need --PEinsert, exit\n";}
+		#$PEinsert = $PEinsert;
+	} else {
+		$PEinsert = $fileinssize;
+	}
+	print "PEinsSize\t$PEinsert\n";
+	$PEencoding=$fileencoding;
+	if($PEencoding ne 'Sanger' && $PEencoding ne '1.5')
+	{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
+}
+if ($filei eq "#2"){ ## MP optional file
+        $MPfile="$workingDIR/$filefinal";
+        if ($fileinssize eq "nd"){
+                if (!$MPinsert || $MPinsert < 1){die "\n# $0 : need --MPinsert, exit\n";}
+        } else {
+                $MPinsert = $fileinssize;
+        }
+        print "MPinsSize\t$MPinsert\n";
+	if ($fileorient eq "nd"){
+		if (!$MPorient || $MPorient eq ""){die "\n# $0: need --MPorient, exit\n";}
+	} else {
+		$MPorient = $fileorient;
+	}
+	if($MPorient ne 'RF' && $MPorient ne 'FR')
+	{ die "\n# $0 : valid orientations are: FR|RF, exit\n"; }
+	
+	print "MPorient\t$MPorient\n";
+	$MPencoding=$fileencoding;
+	if($MPencoding ne 'Sanger' && $MPencoding ne '1.5')
+	{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
+}
+}
+close(TMP);
+
+#if(($PEencoding ne 'Sanger' && $PEencoding ne '1.5') ||
+#  ($MPencoding ne 'Sanger' && $MPencoding ne '1.5'))
+#{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
+
+#if($MPorient ne 'RF' && $MPorient ne 'FR')
+#{ die "\n# $0 : valid orientations are: FR|RF, exit\n"; }
 
 ## 0) check main input file and params
 $infile = $PEfile;
@@ -223,44 +301,46 @@ if($MPfile)
   }
 }
 
+if ($refFASTA ne "noref"){
+	### 2) map reads to reference prior to assembly
+	$samfile = $root . '.sam';
+	$logfile = $root . '.bwa.log';
 
-### 2) map reads to reference prior to assembly
-$samfile = $root . '.sam';
-$logfile = $root . '.bwa.log';
-
-system("$BWAEXE index $refFASTA"); 
+	system("$BWAEXE index $refFASTA"); 
   
-print "# BWA command:\n$BWAEXE mem -t $CPUTHREADS -p $refFASTA $samplefile > $samfile 2> $logfile\n";
-open(BWA,"$BWAEXE mem -t $CPUTHREADS -p $refFASTA $samplefile > $samfile 2> $logfile |")
+	print "# BWA command:\n$BWAEXE mem -t $CPUTHREADS -p $refFASTA $samplefile > $samfile 2> $logfile\n";
+	open(BWA,"$BWAEXE mem -t $CPUTHREADS -p $refFASTA $samplefile > $samfile 2> $logfile |")
 	|| die "# cannot run $BWAEXE mem -t $CPUTHREADS -p $refFASTA $samplefile > $samfile 2> $logfile\n";
-while(<BWA>){ }
-close(BWA); 
+	while(<BWA>){ }
+	close(BWA); 
 
-$ENV{'LC_ALL'} = 'POSIX';
-system("sort $samfile > $tmpfile");
-rename($tmpfile,$samfile);
-push(@trash,$samfile,$logfile);
+	$ENV{'LC_ALL'} = 'POSIX';
+	system("sort $samfile > $tmpfile");
+	rename($tmpfile,$samfile);
+	push(@trash,$samfile,$logfile);
 
-if($MPfile)
-{
-  $samfileMP = $rootMP . '.sam';
-  $logfileMP = $rootMP . '.bwa.log';
+	if($MPfile)
+	{
+	  $samfileMP = $rootMP . '.sam';
+	  $logfileMP = $rootMP . '.bwa.log';
 
-  print "# BWA command:\n$BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP > $samfileMP 2> $logfileMP\n";
-  open(BWA,"$BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP > $samfileMP 2> $logfileMP |")
-	|| die "# cannot run $BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP> $samfileMP 2> $logfileMP\n";
-  while(<BWA>){ }
-  close(BWA); 
+	  print "# BWA command:\n$BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP > $samfileMP 2> $logfileMP\n";
+	  open(BWA,"$BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP > $samfileMP 2> $logfileMP |")
+		|| die "# cannot run $BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP> $samfileMP 2> $logfileMP\n";
+	  while(<BWA>){ }
+	  close(BWA); 
 
-  system("sort $samfileMP > $tmpfile");
-  rename($tmpfile,$samfileMP);
-  push(@trash,$samfileMP,$logfileMP);
+	  system("sort $samfileMP > $tmpfile");
+	  rename($tmpfile,$samfileMP);
+	  push(@trash,$samfileMP,$logfileMP);
+	}
 }
-
-
 
 ## 3) do assemble with velvet in two steps
 
+## Reference-guided assembly (RGA)
+##################################
+if ($refFASTA ne "noref"){
 # 3.1) make kmer hash table with reads mapped to split chloroplast reference
 $velvet_cmd = "$VELVETH $outDIR $KMER -reference $refFASTA -shortPaired -sam $samfile";
 if($MPfile)
@@ -268,7 +348,7 @@ if($MPfile)
   $velvet_cmd .= " -shortPaired2 -sam $samfileMP";
 }
 
-print "# velvetg command:\n$velvet_cmd\n";
+print "# velveth command:\n$velvet_cmd\n";
 open(VELVETH,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
 while(<VELVETH>){ }
 close(VELVETH);
@@ -283,7 +363,7 @@ if($MPfile)
   #Final graph has 14 nodes and n50 of 75334, max 75334, total 134474, using 925984/984681 reads
 }
 
-print "# velveth command:\n$velvet_cmd\n";
+print "# velvetg command:\n$velvet_cmd\n";
 open(VELVETG,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
 while(<VELVETG>)
 { 
@@ -291,6 +371,41 @@ while(<VELVETG>)
 }
 close(VELVETG);#system("head $outDIR/stats.txt"); 
 
+}else { #if ($refFASTA eq "noref"){
+## De-novo assembly
+###################
+
+# 3.1) make kmer hash table with reads mapped to split chloroplast reference
+$velvet_cmd = "$VELVETH $outDIR $KMER -shortPaired -fastq -interleaved $samplefile";
+if($MPfile)
+{
+  $velvet_cmd .= " -shortPaired2 -fastq -separate $pair1fileMP $pair2fileMP";
+}
+
+print "# velveth command:\n$velvet_cmd\n";
+open(VELVETH,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
+while(<VELVETH>){ }
+close(VELVETH);
+
+# 3.2) assemble hashed kmers with proper insert size
+$velvet_cmd = "$VELVETG $outDIR -ins_length $PEinsert $VELVETGPARAMS";
+#Final graph has 19 nodes and n50 of 22447, max 29336, total 131522, using 476527/483841 reads
+
+if($MPfile)
+{
+  $velvet_cmd .= " -ins_length2 $MPinsert -shortMatePaired2 yes";
+  #Final graph has 14 nodes and n50 of 75334, max 75334, total 134474, using 925984/984681 reads
+}
+
+print "# velvetg command:\n$velvet_cmd\n";
+open(VELVETG,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
+while(<VELVETG>)
+{ 
+        print if(/^Final graph/);
+}
+close(VELVETG);#system("head $outDIR/stats.txt");
+}
+## Output file
 $finalfile = "$outDIR/contigs.fa";
 if(!-s $finalfile)
 {
@@ -356,5 +471,3 @@ else{ $finalfile = "$root.sspace.final.scaffolds.fasta" }
 print "\n# final assembly: $finalfile\n\n";
 
 unlink(@trash);
-
-
