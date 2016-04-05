@@ -66,7 +66,7 @@ MP libraries are expected to be RF but can be set to FR as well.
 * Create config file test_cp/assembly_pe `cp test_cp/cleanreads.txt test_cp/assembly_pe`
 and edit test_cp/assembly_pe file leaving only one row:
 
-\#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+> \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
 
 * Assemble cp genome from a single PE library (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
@@ -76,14 +76,37 @@ and edit test_cp/assembly_pe file leaving only one row:
 * Then, create a different config file to use both read libraries `cp test_cp/cleanreads.txt test_cp/assembly_mp` 
 and edit the file reordering rows so that testPE is number #1:
 
-\#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+> \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
 
-\#2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
+> \#2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
 
 * Assemble cp genome combining PE + MP libraries (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
 ./2_assemble_reads.pl test_cp assembly_mp --ref reference.fna
 ```
+
+##### Example of de-novo assembly
+
+* Fish cp reads from WGS library
+
+`./0_get_cp_reads.pl test test_cp_noref poaceae.fna`
+
+* clean and trim reads to remove poor quality segments
+
+`./1_cleanreads.pl test_cp_noref noref`
+
+* Create config file test_cp_noref/assembly_pe 'cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe'
+and edit test_cp/assembly_pe file leaving only one or two rows (as in sections 2.1 and 2.2).
+
+> In this case we are leaving a read library, and note that we have to provide orientation
+> and insert size (FR and 221 in this example; see next section):
+
+> #1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+
+* Finally, assemble cp genome
+
+`./2_assemble_reads.pl test_cp_noref assembly_pe --ref noref`
+
 
 ## Post-assembly inspection
 
