@@ -53,6 +53,8 @@ MP libraries are expected to be RF but can be set to FR as well.
 
 ## Examples
 
+##### Reference-guided assembly
+
 * Fish cp reads from whole genome library, using provided test reads (see [flowchart](./pics/0_get_cp_reads_1_cleanreads.png)):
 ```{shell}
 ./0_get_cp_reads.pl test test_cp poaceae.fna
@@ -63,18 +65,21 @@ MP libraries are expected to be RF but can be set to FR as well.
 ./1_cleanreads.pl test_cp reference.fna 
 ```
 
-* Create config file test_cp/assembly_pe `cp test_cp/cleanreads.txt test_cp/assembly_pe`
-and edit test_cp/assembly_pe file leaving only one row:
+* Create a config file "test_cp/assembly_pe" `cp test_cp/cleanreads.txt test_cp/assembly_pe`
+and edit it leaving only one row:
 
 > \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+
+###### Reference-guided assembly: using a single PE library
 
 * Assemble cp genome from a single PE library (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
 ./2_assemble_reads.pl test_cp assembly_pe --ref ./reference.fna
 ```
+###### Reference-guided assembly: using a PE and MP libraries
 
 * Then, create a different config file to use both read libraries `cp test_cp/cleanreads.txt test_cp/assembly_mp` 
-and edit the file reordering rows so that testPE is number #1:
+and edit it reordering rows so that testPE is number #1:
 
 > \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
 
