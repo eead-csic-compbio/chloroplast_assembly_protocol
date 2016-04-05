@@ -103,7 +103,7 @@ cp test_cp/cleanreads.txt test_cp/assembly_mp
 cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe
 
 # and edit test_cp/assembly_pe file leaving only one or two rows (as in sections 2.1 and 2.2).
-# In this case we are leaving a read library, and note that we have to provide orientation
+# In this case we are leaving a single PE read library, and note that we have to provide orientation
 # and insert size (FR and 221 in this example; see next section):
 
 #1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
