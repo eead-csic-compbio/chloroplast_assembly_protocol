@@ -70,12 +70,12 @@ and edit test_cp/assembly_pe file leaving only one row:
 
 * Assemble cp genome from a single PE library (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
-cd test_cp
 ./2_assemble_reads.pl test_cp assembly_pe --ref ./reference.fna
 ```
 
 * Then, create a different config file to use both read libraries `cp test_cp/cleanreads.txt test_cp/assembly_mp` 
 and edit the file reordering rows so that testPE is number #1:
+
 \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
 \#2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
 
