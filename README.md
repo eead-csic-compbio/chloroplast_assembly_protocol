@@ -68,7 +68,7 @@ MP libraries are expected to be RF but can be set to FR as well.
 * Create a config file "test_cp/assembly_pe" `cp test_cp/cleanreads.txt test_cp/assembly_pe`
 and edit it leaving only one row:
 
-> \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+    > \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
 
 ######- using a single PE library
 
@@ -81,9 +81,9 @@ and edit it leaving only one row:
 * Then, create a different config file to use both read libraries `cp test_cp/cleanreads.txt test_cp/assembly_mp` 
 and edit it reordering rows so that testPE is number #1:
 
-> \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
-
-> \#2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
+    > \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+    
+    > \#2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
 
 * Assemble cp genome combining PE + MP libraries (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
@@ -103,10 +103,10 @@ and edit it reordering rows so that testPE is number #1:
 * Create config file test_cp_noref/assembly_pe `cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe`
 and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP reads; see previous examples).
 
-> In this case we are leaving a single PE library, and note that we have to provide orientation
-> and insert size (FR and 221 in this example):
-
-> \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+    > In this case we are leaving a single PE library, and note that we have to provide orientation
+    > and insert size (FR and 221 in this example):
+    
+    > \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
 
 * Finally, assemble cp genome
 
