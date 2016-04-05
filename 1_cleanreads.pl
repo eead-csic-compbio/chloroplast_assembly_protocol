@@ -31,12 +31,15 @@ my $BWAEXE        = $BINPATH.'/bwa-0.7.6a/bwa';
 
 my ($inpDIR,$refFASTA,$skipCorr);
 
-if(!$ARGV[1]){ die "# usage: $_ <folder with reads, results will be added there> <reference FASTA genome OR \"noref\">\n"; }
+if(!$ARGV[1]){ die "# usage: $_ <folder with reads, results will be added there> <reference FASTA genome OR \"noref\"> [-s: skip Musket error correction]\n"; }
 else
 { 
   ($inpDIR,$refFASTA,$skipCorr) = (@ARGV);
   print "# input_folder=$inpDIR reference=$refFASTA\n";
   print "# TRIM5=$TRIM5 TRIM3=$TRIM3 MINREADLENGTH=$MINREADLENGTH MINSURVIVALRATE=$MINSURVIVALRATE\n\n"; 
+  if (!defined($skipCorr)){
+    $skipCorr="O";
+  }
 }
 
 #my ($inpDIR) = (@ARGV);
@@ -208,7 +211,7 @@ $filei+=1;
 	}
   
   # correct bona fide sequencing errors
-  if(!-s "$trimmedfile.corr.12.fq" && $skipCorr!="-n")
+  if(!-s "$trimmedfile.corr.12.fq" && $skipCorr ne "-s")
   {
 	print "# Running Musket error correction...\n";
       open(MUSKET,"$MUSKETEXE $trimmedfile.12.fq -o $trimmedfile.corr.12.fq -lowercase -inorder -p $CPUTHREADS|")

@@ -45,13 +45,6 @@ usage() if(@ARGV < 1 ||
   !GetOptions(
     'help|h'     => \$help, 
     'ref=s'      => \$refFASTA, 
-#    'PEfile=s'   => \$PEfile, 
-#    'PEinsert=i' => \$PEinsert,
-#    'PEenc=s'    => \$PEencoding,
-#    'MPfile=s'   => \$MPfile, 
-#    'MPinsert=i' => \$MPinsert,
-#    'MPenc=s'    => \$MPencoding,
-#    'MPorient=s' => \$MPorient,
     'threads=i'  => \$CPUTHREADS,
     'sample=i'   => \$SAMPLESIZE,
     'kmer=i'     => \$KMER,
@@ -63,13 +56,6 @@ sub usage
   print   "\nOptions:\n";
   print   "-h this message\n";
   print   "--ref      reference genome in FASTA format of \"noref\"             (required)\n"; 
-#  print   "--PEfile   input pair-end file in FASTQ format          (required)\n"; 
-#  print   "--PEinsert mean insert size of PE read pairs [integer]  (required)\n";
-#  print   "--PEenc    quality encoding of PE reads [Sanger|1.5]    (optional, default=$PEencoding)\n";
-#  print   "--MPfile   input mate-pair file in FASTQ format         (optional)\n"; 
-#  print   "--MPinsert mean insert size of MP read pairs [integer]  (optional, required with --MPfile)\n";
-#  print   "--MPenc    quality encoding of MP reads [Sanger|1.5]    (optional, default=$MPencoding)\n";
-#  print   "--MPorient orientation of MP read pairs [RF|FR]         (optional, default=$MPorient)\n";
   print   "--threads  number of CPU threads to use                 (optional, default=$CPUTHREADS)\n"; 
   print   "--sample   number of reads to be assembled              (optional, default=$SAMPLESIZE)\n";
   print   "--kmer     k-mer size for Velvet assembler              (optional, default=$KMER)\n"; 
@@ -89,48 +75,15 @@ if(!-s $configfile){die "\n# $0 : A config file is needed for the assembly \n\t(
 if($refFASTA ne "noref" && (!$refFASTA || !-s $refFASTA))
 { die "\n# $0 : need a valid --ref FASTA file, exit\n"; }
 
-#if(!$PEfile || !-s $PEfile || !$PEinsert || $PEinsert < 1)
-#{ die "\n# $0 : need --PEfile and --PEinsert, exit\n"; }
-#elsif($PEfile =~ /mlen(\d+)/)
-#{
-#  die "\n# $0 : $PEfile might contain reads < $1 b, please choose a smaller kmer\n" if($1 < $KMER);
-#}  
-
-#if($MPfile && ( !-s $MPfile || !$MPinsert || $MPinsert < 1) )
-#{ die "\n# $0 : --MPfile and/or --MPinsert are not valid, exit\n"; }
-
-#if(($PEencoding ne 'Sanger' && $PEencoding ne '1.5') || 
-#  ($MPencoding ne 'Sanger' && $MPencoding ne '1.5'))
-#{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
-
-#if($MPorient ne 'RF' && $MPorient ne 'FR')
-#{ die "\n# $0 : valid orientations are: FR|RF, exit\n"; }
-
 if(!$outDIR){ $outDIR = "$configfile\_kmer$KMER\_sample$SAMPLESIZE" }
 if(!-s $outDIR){ mkdir($outDIR) }
 else{ print "# re-using existing output folder '$outDIR'\n\n"; }
-
-#printf("\n# %s  --ref %s --PEfile %s --PEinsert %d --PEenc %s \\\n".
-#      "#  --MPfile %s --MPinsert %d --MPenc %s --MPorient %s \\\n".
-#      "#  --threads %d --sample %d --kmer %d --outdir %s\n\n",
-#	$0,$refFASTA,$PEfile,$PEinsert,$PEencoding,
-#  $MPfile,$MPinsert,$MPencoding,$MPorient,
-#  $CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR); 
 
 printf("\n# %s %s --ref %s --PEenc %s \\\n".
       "#  --MPenc %s \\\n".
       "#  --threads %d --sample %d --kmer %d --outdir %s\n\n",
 	$0,$configname,$refFASTA,$PEencoding,
   $MPencoding,$CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR); 
-
-#open(COMMAND,">$outDIR/command.txt");
-#printf COMMAND ("%s --ref %s --PEfile %s --PEinsert %d --PEenc %s \\\n".
-#      "  --MPfile %s --MPinsert %d --MPenc %s --MPorient %s \\\n".
-#      "  --threads %d --sample %d --kmer %d --outdir %s\n\n",
-#	$0,$refFASTA,$PEfile,$PEinsert,$PEencoding,
-#  $MPfile,$MPinsert,$MPencoding,$MPorient,
-#  $CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR);
-#close(COMMAND);
 
 open(COMMAND,">$outDIR/command.txt");
 printf COMMAND ("%s %s --ref %s --PEenc %s \\\n".
@@ -193,13 +146,6 @@ if ($filei eq "#2"){ ## MP optional file
 }
 }
 close(TMP);
-
-#if(($PEencoding ne 'Sanger' && $PEencoding ne '1.5') ||
-#  ($MPencoding ne 'Sanger' && $MPencoding ne '1.5'))
-#{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
-
-#if($MPorient ne 'RF' && $MPorient ne 'FR')
-#{ die "\n# $0 : valid orientations are: FR|RF, exit\n"; }
 
 ## 0) check main input file and params
 $infile = $PEfile;

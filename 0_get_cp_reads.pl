@@ -12,16 +12,16 @@ use FindBin '$Bin';
 
 my $DUKEXE = $Bin.'/bin/duk/duk';
 
-my $refcpFASTA = $Bin.'/poaceae.fna';
+#my $refcpFASTA = $Bin.'/poaceae.fna';
 # contains several cps from Poaceae species:
 #>NC_015820 Acidosasa purpurea
 #>NC_008591 Agrostis stolonifera
 #...
 
 
-if(!$ARGV[1] || !-d $ARGV[0]){ die "# usage: $_ <folder with all-read files> <output folder with cp-read files>\n"; }
+if(!$ARGV[2] || !-d $ARGV[0]){ die "# usage: $_ <folder with all-read files> <output folder with cp-read files> <FASTA with related chloroplast genomes>\n"; }
 
-my ($inpDIR,$outDIR) = (@ARGV);
+my ($inpDIR,$outDIR,$refcpFASTA) = (@ARGV);
 
 mkdir($outDIR) if(!-d $outDIR);
 
