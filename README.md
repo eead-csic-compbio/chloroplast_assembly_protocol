@@ -107,6 +107,7 @@ and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP re
 
 `./2_assemble_reads.pl test_cp_noref assembly_pe --ref noref`
 
+###### For more info and parameters of the scripts see [README.txt](README.txt)
 
 ## Post-assembly inspection
 
