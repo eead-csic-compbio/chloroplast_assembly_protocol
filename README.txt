@@ -176,9 +176,7 @@ Other parameters could be changed by editing the script 1_cleanreads.pl.
 
 my $VELVETGPARAMS = '-cov_cutoff 50 -min_contig_lgth 150 -exp_cov auto -unused_reads yes -scaffolding no';
 
-
-
-3. Notes about reference genome, reads orientation and insert size
+4. Notes about reference genome, reads orientation and insert size
 ==================================================================
 
 Assembling using a reference (reference.fna in examples in sections 2.1 and 2.2)
@@ -207,14 +205,14 @@ Note also that the last field corresponds to base quality encoding
 (see File Formats section below), which is set to "Sanger" by default but
 should be changed according to the FASTQ encoding of the files being used as input.
 
-4. Post-assembly inspection
+5. Post-assembly inspection
 ===========================
 
 The attached tutorial 'HOWTOcheck_assembly.txt' contains recipes to analyze and validate your 
 assemblies.
 
 
-5. Propagation of annotated features to assemblies
+6. Propagation of annotated features to assemblies
 ==================================================
 
 If a good quality master annotation in GenBank format is at hand, it can be used to propagate 
@@ -226,7 +224,7 @@ perl _annot_fasta_from_gbk.pl reference.gbk assembly.fa XYZ_chloroplast.gbk XYZ
 NOTE: This script requires setting a valid path to BLAST+ binaries installed on your system.
 
 
-6. Generating tracks from aligned assemblies
+7. Generating tracks from aligned assemblies
 ============================================
 
 If several chloroplast assemblies are aligned they can then be further used to produce tracks for software CIRCOS <http://circos.ca>.
@@ -255,9 +253,5 @@ Fields (columns) are separated by a blank space:
 6. Base quality encoding: quality codes change from a sequencing platform to another.
 	"Sanger": valid for Sanger, Illumina 1.9 and Phred-33, for example.
 	"1.5": valid for Illumina 1.5 and Phred+64, for example.
-
-B. Additional parameters
-========================
-
 
 ##
