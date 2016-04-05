@@ -76,7 +76,7 @@ and edit it leaving only one row:
 ```{shell}
 ./2_assemble_reads.pl test_cp assembly_pe --ref ./reference.fna
 ```
-###### using a PE and MP libraries
+####### using both PE and MP libraries
 
 * Then, create a different config file to use both read libraries `cp test_cp/cleanreads.txt test_cp/assembly_mp` 
 and edit it reordering rows so that testPE is number #1:
