@@ -96,12 +96,12 @@ and edit the file reordering rows so that testPE is number #1:
 `./1_cleanreads.pl test_cp_noref noref`
 
 * Create config file test_cp_noref/assembly_pe 'cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe'
-and edit test_cp/assembly_pe file leaving only one or two rows (as in sections 2.1 and 2.2).
+and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP reads; see previous examples).
 
 > In this case we are leaving a read library, and note that we have to provide orientation
-> and insert size (FR and 221 in this example; see next section):
+> and insert size (FR and 221 in this example):
 
-> #1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+> \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
 
 * Finally, assemble cp genome
 
