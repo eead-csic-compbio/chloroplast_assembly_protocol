@@ -19,7 +19,7 @@ my $DUKEXE = $Bin.'/bin/duk/duk';
 #...
 
 
-if($ARGV[0] || !-d $ARGV[0] || !$ARGV[2])
+if(!$ARGV[0] || !-d $ARGV[0] || !$ARGV[2])
 { 
   die "# usage: $_ <folder with all-read files> <output folder with cp-read files> <FASTA file with related cp genomes>\n"; 
 }
