@@ -108,6 +108,7 @@ print "Reading $configfile...\n";
 open(TMP,$configfile) || die "# cannot read $configfile\n";
 while(<TMP>)
 {
+# TODO: skip commented lines
 ($filei, $filename, $filefinal, $fileorient, $fileinssize, $fileencoding)=split " ", $_;
 print "$_\n";
 if ($filei eq "1"){ ## PE mandatory file
