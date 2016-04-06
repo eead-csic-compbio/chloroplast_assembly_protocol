@@ -118,8 +118,8 @@ and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP re
 
 In addition, examples yielding assembled data could be run following the steps at:
 
-- HOWTO_brachy.txt: assembly with Brachypodium Bd21 data (PE).
-- HOWTO_barley.txt: assembly with barley cultivar Morex data (PE + MP).
+- [HOWTO_brachy.txt](HOWTO_brachy.txt): assembly with Brachypodium Bd21 data (PE).
+- [HOWTO_barley.txt](HOWTO_barley.txt): assembly with barley cultivar Morex data (PE + MP).
 
 ## Post-assembly inspection
 
@@ -136,7 +136,6 @@ perl _annot_fasta_from_gbk.pl reference.gbk assembly.fa XYZ_chloroplast.gbk XYZ
 ```
 
 __NOTE__: This script requires setting a valid path to BLAST+ binaries installed on your system, plus [Bioperl](http://www.bioperl.org/wiki/Main_Page) installed on your system.
-
 
 
 ## Generating tracks from aligned assemblies
