@@ -47,6 +47,12 @@ samtools 0.1.19 [http://samtools.sourceforge.net]
 
 2. Test run
 ===========
+
+Note: currently the examples are not generating assembly contigs, since the number of input reads is not enough.
+Therefore, the test will end with a message like:
+"# Velvet could not assembly any contig..."
+If so, the scripts have run successfully and should be generating an assembly with real input data.
+
 2.1. Using a reference genome
 =============================
 
@@ -62,7 +68,7 @@ samtools 0.1.19 [http://samtools.sourceforge.net]
 # Create config file test_cp/assembly_pe
 cp test_cp/cleanreads.txt test_cp/assembly_pe
 
-# and edit test_cp/assembly_pe file leaving only one row and editing encoding if necessary:
+# and edit test_cp/assembly_pe file leaving only one row:
 
 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 1.5
 
@@ -106,10 +112,18 @@ cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe
 # In this case we are leaving a single PE read library, and note that we have to provide orientation
 # and insert size (FR and 221 in this example; see next section):
 
-#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 1.5
 
 # Finally, assemble cp genome
 ./2_assemble_reads.pl test_cp_noref assembly_pe --ref noref
+
+2.4. Other examples
+===================
+In addition, examples yielding assembled data could be run following the steps at:
+
+- HOWTO_brachy.txt: assembly with Brachypodium Bd21 data (PE).
+- HOWTO_barley.txt: assembly with barley cultivar Morex data (PE + MP).
+- HOWTO_barley_denovo.txt: assembly with barley cultivar Morex data (PE + MP) not using a reference.
 
 3. Reference
 ============
@@ -169,7 +183,6 @@ Otherwise, the name of the FASTA file to be used as reference.
 - --kmer INTEGER: k-mer size for Velvet assembler.
 - --outdir WORKING_DIR: a path to a directory to store output files.
 
-
 Other parameters could be changed by editing the script 1_cleanreads.pl.
 
 - Parameters to be used by the assembler
@@ -202,8 +215,10 @@ in wet-lab previous to sequencing. A valid config file would look like:
 2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
 
 Note also that the last field corresponds to base quality encoding
-(see File Formats section below), which is set to "Sanger" by default but
-should be changed according to the FASTQ encoding of the files being used as input.
+(see File Formats section below). This field is set according to the encoding detected
+by FastQC (run by 1_cleanreads.pl). If no known encoding is found, it is set to "Sanger" by default.
+Nonetheless, this field could be edited in the config files, to either "Sanger" (Phred+33) or
+"1.5" (Phred+64), according to the encoding of the Fastq files being used as input.
 
 5. Post-assembly inspection
 ===========================

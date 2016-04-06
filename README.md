@@ -53,6 +53,8 @@ MP libraries are expected to be RF but can be set to FR as well.
 
 ## Examples
 
+Input reads are within "test" directory.
+
 ##### Reference-guided assembly
 
 * Fish cp reads from whole genome library, using provided test reads (see [flowchart](./pics/0_get_cp_reads_1_cleanreads.png)):
@@ -70,7 +72,7 @@ MP libraries are expected to be RF but can be set to FR as well.
 * Create a config file "test_cp/assembly_pe" `cp test_cp/cleanreads.txt test_cp/assembly_pe`
 and edit it leaving only one row:
 
-    > 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+    > 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 1.5
 
 * Assemble cp genome from a single PE library (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
@@ -113,6 +115,12 @@ and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP re
 `./2_assemble_reads.pl test_cp_noref assembly_pe --ref noref`
 
 ###### For more info and parameters of the scripts see [README.txt](README.txt)
+
+In addition, examples yielding assembled data could be run following the steps at:
+
+- HOWTO_brachy.txt: assembly with Brachypodium Bd21 data (PE).
+- HOWTO_barley.txt: assembly with barley cultivar Morex data (PE + MP).
+- HOWTO_barley_denovo.txt: assembly with barley cultivar Morex data (PE + MP) not using a reference.
 
 ## Post-assembly inspection
 
