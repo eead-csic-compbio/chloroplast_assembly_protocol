@@ -18,7 +18,8 @@ my $READSAMPLESIZE = 10_000; # reads mapped to reference to estimate insert size
 my $TRIM5 = 3; # 5' bases to remove, adjust as needed after inspection of FastQC reports
 my $TRIM3 = 3; # 3' bases to remove
 
-my $MINREADLENGTH = 60; # this will allow assemblying with kmers up to this size, decrease if required
+my $MINREADLENGTH = 40; # this will allow assemblying with kmers up to this size, decrease if required
+# Previous value was 60
 
 my $MINSURVIVALRATE = 50; # a warning will be used if less than these %reads survive trimmomatic
 
@@ -228,6 +229,7 @@ $filei+=1;
 	print "# Musket error correction skipped.\n";
       $finalFile="$trimmedfile.12.fq";
   }
+print "OHOHOH4";
 
   $insSize="nd";
   $orient="nd";
@@ -284,6 +286,8 @@ $filei+=1;
 	system("gzip $finalFile");
 	system("mv $finalFile.gz $inpDIR");
 
+	print "OHOHOH";
+
 	if ($encoding =~ "Sanger" || $encoding =~ "Phred+33" || $encoding =~ "p33" 
 		|| $encoding =~ "Illumina 1.8" || $encoding =~ "Illumina 1.9"){
 		$encoding = "Sanger";
@@ -294,6 +298,8 @@ $filei+=1;
 		print "# WARNING: unreconized quality scores format $encoding. Setting to Sanger by default.\n";
 		$encoding = "Sanger";
 	}
+
+	print "OHOHOH2";
 
 	print "Printing cleanreads data...\n";
 	#open(CLEANREADS,">$inpDIR/cleanreads.txt");
@@ -307,6 +313,9 @@ $filei+=1;
 }
 
 close(CLEANREADS);
+
+print "OHOHOH3";
+
 
 ###########################
 

@@ -120,7 +120,6 @@ In addition, examples yielding assembled data could be run following the steps a
 
 - HOWTO_brachy.txt: assembly with Brachypodium Bd21 data (PE).
 - HOWTO_barley.txt: assembly with barley cultivar Morex data (PE + MP).
-- HOWTO_barley_denovo.txt: assembly with barley cultivar Morex data (PE + MP) not using a reference.
 
 ## Post-assembly inspection
 
