@@ -41,7 +41,7 @@ my $outDIR     = '';
 my $refFASTA   = '';
 my $help;
 
-usage() if(@ARGV < 1 || 
+usage() if(@ARGV < 2 || 
   !GetOptions(
     'help|h'     => \$help, 
     'ref=s'      => \$refFASTA, 
@@ -49,7 +49,9 @@ usage() if(@ARGV < 1 ||
     'sample=i'   => \$SAMPLESIZE,
     'kmer=i'     => \$KMER,
     'outdir=s'   => \$outDIR) || defined($help) );
-  
+
+# TODO: -folder option as in 1_cleanreads.pl and -config option to specify config file
+# TODO: change no reference assembly option from -ref noref to absence of the flag
 sub usage
 {
   print   "./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME [Options] \n";

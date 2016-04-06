@@ -76,7 +76,7 @@ and edit it leaving only one row:
 
 * Assemble cp genome from a single PE library (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
-./2_assemble_reads.pl test_cp assembly_pe --ref ./reference.fna
+./2_assemble_reads.pl test_cp assembly_pe -ref ./reference.fna
 ```
 ######- using both PE and MP libraries
 
@@ -89,7 +89,7 @@ and edit it reordering rows so that testPE is number 1:
 
 * Assemble cp genome combining PE + MP libraries (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
-./2_assemble_reads.pl test_cp assembly_mp --ref reference.fna
+./2_assemble_reads.pl test_cp assembly_mp -ref reference.fna
 ```
 
 ##### Example of de-novo assembly
@@ -112,7 +112,7 @@ and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP re
 
 * Finally, assemble cp genome
 
-`./2_assemble_reads.pl test_cp_noref assembly_pe --ref noref`
+`./2_assemble_reads.pl test_cp_noref assembly_pe -ref noref`
 
 ###### For more info and parameters of the scripts see [README.txt](README.txt)
 

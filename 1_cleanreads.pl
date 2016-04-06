@@ -313,7 +313,7 @@ foreach $readf (@readfiles)
   $orient="nd";
 
   # if reference is available estimate insert and orientation by mapping to it
-  if($refFASTA ne "noref")
+  if(defined($refFASTA))
   {
 	  # extract sample pairs (for instance 100K)
 	  my $headlines = sprintf("-%d",4*$READSAMPLESIZE);

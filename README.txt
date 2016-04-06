@@ -39,11 +39,11 @@ samtools 0.1.19 [http://samtools.sourceforge.net]
 
 1. Protocol at a glance
 =======================
-# Create directory with your samples ("SAMPLESDIR")
-./0_get_cp_reads.pl SAMPLESDIR ASSEMBLYDIR
-./1_cleanreads.pl ASSEMBLYDIR FASTA_REF_GENOME
+# Create directory with your samples (INPUT_DIR)
+./0_get_cp_reads.pl INPUT_DIR WORKING_DIR FASTA_CP_GENOMES
+./1_cleanreads.pl -folder WORKING_DIR [-ref FASTA_REF_GENOME] [-skip] [-regex REGEX]
 # Create config file ("ASSEMBLYCONF containing ASSEMBLY_NAME")
-./2_assemble_reads.pl ASSEMBLYDIR ASSEMBLY_NAME --ref FASTA_REF_GENOME
+./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME -ref FASTA_REF_GENOME
 
 2. Test run
 ===========
@@ -63,7 +63,7 @@ If so, the scripts have run successfully and should be generating an assembly wi
 ./0_get_cp_reads.pl test test_cp poaceae.fna
 
 # Clean and trim reads to remove poor quality segments
-./1_cleanreads.pl test_cp reference.fna
+./1_cleanreads.pl -folder test_cp -ref reference.fna
 
 # Create config file test_cp/assembly_pe
 cp test_cp/cleanreads.txt test_cp/assembly_pe
@@ -73,7 +73,7 @@ cp test_cp/cleanreads.txt test_cp/assembly_pe
 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 1.5
 
 # Finally, assemble cp genome
-./2_assemble_reads.pl test_cp assembly_pe --ref ./reference.fna
+./2_assemble_reads.pl test_cp assembly_pe -ref ./reference.fna
 
 2.2. Combining PE + MP libraries
 ================================
@@ -84,13 +84,13 @@ cp test_cp/cleanreads.txt test_cp/assembly_pe
 
 cp test_cp/cleanreads.txt test_cp/assembly_mp
 
-# and edit the file reordering rows so that testPE is number 1 and edit encoding:
+# and edit the file reordering rows so that testPE is number 1:
 
 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 1.5
 2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 1.5
 
 # Finally, assemble combining PE + MP libraries
-./2_assemble_reads.pl test_cp assembly_mp --ref reference.fna
+./2_assemble_reads.pl test_cp assembly_mp -ref reference.fna
 
 2.3. de-novo, without reference genome
 ======================================
@@ -102,7 +102,7 @@ cp test_cp/cleanreads.txt test_cp/assembly_mp
 ./0_get_cp_reads.pl test test_cp_noref poaceae.fna
 
 # clean and trim reads to remove poor quality segments
-./1_cleanreads.pl test_cp_noref noref
+./1_cleanreads.pl -folder test_cp_noref
 
 # Create config file test_cp_noref/assembly_pe
 
@@ -115,7 +115,7 @@ cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe
 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 1.5
 
 # Finally, assemble cp genome
-./2_assemble_reads.pl test_cp_noref assembly_pe --ref noref
+./2_assemble_reads.pl test_cp_noref assembly_pe -ref noref
 
 2.4. Other examples
 ===================
@@ -131,10 +131,10 @@ In addition, examples yielding assembled data could be run following the steps a
 
 This script can be used to extract chloroplast reads from different WGS libraries.
 
-./0_get_cp_reads.pl INPUT_DIR OUTPUT_DIR FASTA_CP_GENOMES
+./0_get_cp_reads.pl INPUT_DIR WORKING_DIR FASTA_CP_GENOMES
 
 - INPUT_DIR: a directory containing the FASTQ files with reads to be used as input.
-- OUTPUT_DIR: a path to a directory (which will be created if does not exist) to store output files.
+- WORKING_DIR: a path to a directory (which will be created if does not exist) to store output files.
 - FASTA_CP_GENOMES: fasta file with sequences of chloroplast genomes from related species.
 
 "poaceae.fna" file is included as an example of a file which could be used
@@ -145,12 +145,12 @@ when working with Poaceae chloroplast genomes.
 
 A script to improve quality of reads and estimate insert size and reads orientation.
 
-./1_cleanreads.pl WORKING_DIR FASTA_REF_GENOME [-s]
+./1_cleanreads.pl -folder WORKING_DIR [-ref FASTA_REF_GENOME] [-skip] [-regex REGEX]
 
-- WORKING_DIR: a path to a directory with input files (the one created in the previous script).
-- FASTA_REF_GENOME: to perform de-novo assembly this parameter should be "noref".
-Otherwise, the name of the FASTA file to be used as reference.
-- -s: skip Musket error correction. default: perform Musket error correction.
+- -folder WORKING_DIR: a path to a directory with input files (the one created in the previous script).
+- -ref FASTA_REF_GENOME: ignore to perform de-novo assembly. Otherwise, the name of the FASTA file to be used as reference.
+- -skip: skip Musket error correction. default: perform Musket error correction.
+- -regex REGEX: a custom regex matching FASTQ headers to call read pairs (use only if the script warns in the first try).
 
 Other parameters could be changed by editing the script 1_cleanreads.pl.
 - Parameters related to running time:
@@ -170,17 +170,16 @@ my $MINSURVIVALRATE = 50; # a warning will be used if less than these %reads sur
 
 A script to assemble the reads into new chloroplast contig or contigs.
 
-./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME --ref FASTA_REF_GENOME
+./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME -ref FASTA_REF_GENOME
 [--threads FLOAT] [--sample INTEGER] [--kmer INTEGER] [--outdir OUTPUT_DIR]
 
 - WORKING_DIR: a path to a directory with input files (the one created in the previous script).
 It will be used as output directory also, if --outdir option is not used (see below).
-- --ref FASTA_REF_GENOME: to perform de-novo assembly this parameter should be "noref".
-Otherwise, the name of the FASTA file to be used as reference.
-- --threads FLOAT: number of CPU threads to use.
-- --sample INTEGER: number of reads to be used for the assembly.
-- --kmer INTEGER: k-mer size for Velvet assembler.
-- --outdir WORKING_DIR: a path to a directory to store output files.
+- -ref FASTA_REF_GENOME: to perform de-novo assembly this parameter should be "noref". Otherwise, the name of the FASTA file to be used as reference.
+- -threads FLOAT: number of CPU threads to use.
+- -sample INTEGER: number of reads to be used for the assembly.
+- -kmer INTEGER: k-mer size for Velvet assembler.
+- -outdir WORKING_DIR: a path to a directory to store output files.
 
 Other parameters could be changed by editing the script 1_cleanreads.pl.
 
@@ -191,7 +190,7 @@ my $VELVETGPARAMS = '-cov_cutoff 50 -min_contig_lgth 150 -exp_cov auto -unused_r
 4. Notes about reference genome, reads orientation and insert size
 ==================================================================
 
-Assembling using a reference (reference.fna in examples in sections 2.1 and 2.2)
+Assembling using a reference ('reference.fna' in examples in sections 2.1 and 2.2)
 allows the scripts to estimate (thru BWA mappings) mean insert sizes and orientations
 for each input sample.
 
