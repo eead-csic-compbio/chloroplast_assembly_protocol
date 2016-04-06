@@ -64,7 +64,7 @@ Input reads are within "test" directory.
 
 * Clean and trim reads to remove poor quality segments; output includes mean insert sizes and orientations (see [flowchart](./pics/0_get_cp_reads_1_cleanreads.png)):
 ```{shell}  
-./1_cleanreads.pl test_cp reference.fna 
+./1_cleanreads.pl -folder test_cp -ref reference.fna 
 ```
 
 ######- using a single PE library
@@ -100,7 +100,7 @@ and edit it reordering rows so that testPE is number 1:
 
 * clean and trim reads to remove poor quality segments
 
-`./1_cleanreads.pl test_cp_noref noref`
+`./1_cleanreads.pl -folder test_cp_noref `
 
 * Create config file test_cp_noref/assembly_pe `cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe`
 and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP reads; see previous examples).
