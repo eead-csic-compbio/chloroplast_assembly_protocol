@@ -42,8 +42,8 @@ samtools 0.1.19 [http://samtools.sourceforge.net]
 # Create directory with your samples ("SAMPLESDIR")
 ./0_get_cp_reads.pl SAMPLESDIR ASSEMBLYDIR
 ./1_cleanreads.pl ASSEMBLYDIR FASTA_REF_GENOME
-# Create config file ("ASSEMBLYCONF")
-./2_assemble_reads.pl ASSEMBLYDIR ASSEMBLYCONF --ref FASTA_REF_GENOME
+# Create config file ("ASSEMBLYCONF containing ASSEMBLY_NAME")
+./2_assemble_reads.pl ASSEMBLYDIR ASSEMBLY_NAME --ref FASTA_REF_GENOME
 
 2. Test run
 ===========
@@ -62,9 +62,9 @@ samtools 0.1.19 [http://samtools.sourceforge.net]
 # Create config file test_cp/assembly_pe
 cp test_cp/cleanreads.txt test_cp/assembly_pe
 
-# and edit test_cp/assembly_pe file leaving only one row:
+# and edit test_cp/assembly_pe file leaving only one row and editing encoding if necessary:
 
-#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 1.5
 
 # Finally, assemble cp genome
 ./2_assemble_reads.pl test_cp assembly_pe --ref ./reference.fna
@@ -78,10 +78,10 @@ cp test_cp/cleanreads.txt test_cp/assembly_pe
 
 cp test_cp/cleanreads.txt test_cp/assembly_mp
 
-# and edit the file reordering rows so that testPE is number #1:
+# and edit the file reordering rows so that testPE is number 1 and edit encoding:
 
-#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
-#2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
+1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 1.5
+2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 1.5
 
 # Finally, assemble combining PE + MP libraries
 ./2_assemble_reads.pl test_cp assembly_mp --ref reference.fna
@@ -190,16 +190,16 @@ However, when assembling de-novo (as in the example in section 2.3), insert size
 orientation of reads can not be estimated by the scripts. The config file generated
 has "nd" values in the orientation and insert size fields:
 
-#1 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz nd nd Sanger
-#2 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz nd nd Sanger
+1 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz nd nd Sanger
+2 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz nd nd Sanger
 
 Those fields must be edited previous to the assembly step.
 Orientation is FR for most standard PE runs, whereas MP runs are often RF.
 Insert size should be estimated somehow, likely from DNA size selection
 in wet-lab previous to sequencing. A valid config file would look like:
 
-#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
-#2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
+1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
 
 Note also that the last field corresponds to base quality encoding
 (see File Formats section below), which is set to "Sanger" by default but
@@ -239,8 +239,8 @@ A.1 Format of assembly config files (cleanreads.txt)
 ====================================================
 
 Fields (columns) are separated by a blank space:
-1. File number: the file "#1" will be used as main PE file.
-	A second file "#2" will be used as auxiliary MP file.
+1. File number: the file "1" will be used as main PE file.
+	A second file "2" will be used as auxiliary MP file, if present.
 2. Name: a short name identifying each sample.
 3. Input filename: file with clean reads to be used as input 
 	for the assembly step.

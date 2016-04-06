@@ -284,9 +284,20 @@ $filei+=1;
 	system("gzip $finalFile");
 	system("mv $finalFile.gz $inpDIR");
 
+	if ($encoding =~ "Sanger" || $encoding =~ "Phred+33" || $encoding =~ "p33" 
+		|| $encoding =~ "Illumina 1.8" || $encoding =~ "Illumina 1.9"){
+		$encoding = "Sanger";
+	} elsif ($encoding =~ "Illumina 1.5" || $encoding =~ "Phred+64" || $encoding =~ "p64" 
+		|| $encoding =~ "Illumina 1.3" || $encoding =~ "Solexa"){
+		$encoding = "1.5";
+	} else { # If not known, put Sanger and print Warning
+		print "# WARNING: unreconized quality scores format $encoding. Setting to Sanger by default.\n";
+		$encoding = "Sanger";
+	}
+
 	print "Printing cleanreads data...\n";
 	#open(CLEANREADS,">$inpDIR/cleanreads.txt");
-	printf CLEANREADS ("#$filei $origFilename $finalFile.gz $orient $insSize Sanger\n");
+	printf CLEANREADS ("$filei $origFilename $finalFile.gz $orient $insSize $encoding\n");
 	#close(CLEANREADS);
 
     print "# fixed file: $inpDIR/$finalFile.gz\n";

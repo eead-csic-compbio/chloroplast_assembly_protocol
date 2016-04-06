@@ -52,7 +52,7 @@ usage() if(@ARGV < 1 ||
   
 sub usage
 {
-  print   "./2_assemble_reads.pl WORKING_DIR [Options] \n";
+  print   "./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME [Options] \n";
   print   "\nOptions:\n";
   print   "-h this message\n";
   print   "--ref      reference genome in FASTA format of \"noref\"             (required)\n"; 
@@ -110,7 +110,7 @@ while(<TMP>)
 {
 ($filei, $filename, $filefinal, $fileorient, $fileinssize, $fileencoding)=split " ", $_;
 print "$_\n";
-if ($filei eq "#1"){ ## PE mandatory file
+if ($filei eq "1"){ ## PE mandatory file
 	$PEfile="$workingDIR/$filefinal";
 	if ($fileinssize eq "nd"){
 		if (!$PEinsert || $PEinsert < 1){die "\n# $0 : need --PEinsert, exit\n";}
@@ -123,7 +123,7 @@ if ($filei eq "#1"){ ## PE mandatory file
 	if($PEencoding ne 'Sanger' && $PEencoding ne '1.5')
 	{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
 }
-if ($filei eq "#2"){ ## MP optional file
+if ($filei eq "2"){ ## MP optional file
         $MPfile="$workingDIR/$filefinal";
         if ($fileinssize eq "nd"){
                 if (!$MPinsert || $MPinsert < 1){die "\n# $0 : need --MPinsert, exit\n";}
