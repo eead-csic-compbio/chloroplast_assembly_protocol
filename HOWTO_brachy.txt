@@ -1,0 +1,36 @@
+# 1) navigate to http://www.ebi.ac.uk/ena/data/view/PRJNA32607 and download a sample PE library
+
+# HiSeq2000 (<700MB each)
+wget -c ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR547/SRR547945/SRR547945_1.fastq.gz
+wget -c ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR547/SRR547945/SRR547945_2.fastq.gz
+
+# GAIIx (even larger)wget -c ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR191/SRR191818/SRR191818_1.fastq.gz
+wget -c ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR191/SRR191818/SRR191818_2.fastq.gz
+
+# 2) put raw reads in folder and uncompress
+mkdir raw_reads
+mv SRR547945_*gz raw_reads
+cd raw_reads
+zcat SRR547945_* > SRR547945.fastq
+rm -f SRR547945_*gz
+cd ..
+
+# 3) extract cp reads to cp_reads folder 
+~/codigo/github/chloroplast_assembly_protocol/0_get_cp_reads.pl raw_reads/ cp_reads/ \
+  ~/codigo/github/chloroplast_assembly_protocol/reference.fna
+
+# 4) clean reads
+~/codigo/github/chloroplast_assembly_protocol/1_cleanreads.pl cp_reads/ \
+  ~/codigo/github/chloroplast_assembly_protocol/reference.fna
+
+# 5) create config file -> cp_reads/assembly_pe
+# 1 testPE cp-SRR547945.wind15_28.3crop94.mlen60.corr.12.fq.gz FR 166 Sanger
+
+# 6) assemble reads +ref
+~/codigo/github/chloroplast_assembly_protocol/2_assemble_reads.pl cp_reads/ assembly_pe \
+  --ref ~/codigo/github/chloroplast_assembly_protocol/reference.fna
+# final assembly: cp-SRR547945.wind15_28.3crop94.mlen60.corr.12.sspace.final.scaffolds.fasta
+
+# 7) assemble reads -ref
+~/codigo/github/chloroplast_assembly_protocol/2_assemble_reads.pl cp_reads/ assembly_pe --ref noref
+# final assembly: cp-SRR547945.wind15_28.3crop94.mlen60.corr.12.sspace.final.scaffolds.fasta
