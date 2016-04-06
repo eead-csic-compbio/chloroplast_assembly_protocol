@@ -236,7 +236,7 @@ foreach $readf (@readfiles)
       {
         print "\n# WARNING: trying with regex matching SRA-dumped reads\n";
 
-        $regexOK == 1;
+        $regexOK = 1;
         $command = "$SPLITPAIRSEXE -i $trimmedfile.fastq -l $trimmedfile.12.fq -s $trimmedfile.s.fq ";
         $command .= ' -R "(^\w+\.\d+)\.([12])" -S "\1/\2" ';
 
@@ -258,7 +258,7 @@ foreach $readf (@readfiles)
       {
         print "\n# WARNING: trying with custom regex\n";
 
-        $regexOK == 1;
+        $regexOK = 1;
         $command = "$SPLITPAIRSEXE -i $trimmedfile.fastq -l $trimmedfile.12.fq -s $trimmedfile.s.fq ";
         $command .= ' -R "'.$custom_regex.'" -S "\1/\2" ';
 
