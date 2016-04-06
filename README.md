@@ -11,11 +11,15 @@ Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
 
 ## Software dependencies
 
-This protocol has been tested on Linux x86_64 systems, although it should also work on Mac-OSX settings. It requires perl, which should be installed on all Linux environments, plus some third-party programs listed below, which are provided pre-compiled. In order to check whether they work on your machine, or to re-compile them otherwise, for instance on Mac-OSX, please run on the terminal:
+This protocol has been tested on Linux x86_64 systems, although it should also work on Mac-OSX settings.
+It requires perl, which should be installed on all Linux environments, plus some third-party programs listed below,
+which are provided pre-compiled. In order to check whether they work on your machine, or to re-compile them otherwise,
+for instance on Mac-OSX, please run on the terminal:
 ```{shell}  
 perl ./install.pl
 ```
-The script will tell which programs are set up (OK) and which require installing a compiler (gcc or g++) or java in order to run.
+The script will tell which programs are set up (OK) and which require installing a compiler
+(gcc or g++) or java in order to run.
 
 This is the full list of software, located in bin/, required for the protocol:
 
@@ -49,29 +53,73 @@ MP libraries are expected to be RF but can be set to FR as well.
 
 ## Examples
 
+Input reads are within "test" directory.
+
+##### Reference-guided assembly
+
 * Fish cp reads from whole genome library, using provided test reads (see [flowchart](./pics/0_get_cp_reads_1_cleanreads.png)):
 ```{shell}
-./0_get_cp_reads.pl test/ test_cp/ 
+./0_get_cp_reads.pl test test_cp poaceae.fna
 ```    
 
 * Clean and trim reads to remove poor quality segments; output includes mean insert sizes and orientations (see [flowchart](./pics/0_get_cp_reads_1_cleanreads.png)):
 ```{shell}  
-./1_cleanreads.pl test_cp reference.fna 
+./1_cleanreads.pl -folder test_cp -ref reference.fna 
 ```
+
+######- using a single PE library
+
+* Create a config file "test_cp/assembly_pe" `cp test_cp/cleanreads.txt test_cp/assembly_pe`
+and edit it leaving only one row:
+
+    > 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 1.5
 
 * Assemble cp genome from a single PE library (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
-cd test_cp
-./2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
-  --PEinsert 221 --ref ../reference.fna
+./2_assemble_reads.pl test_cp assembly_pe --ref ./reference.fna
 ```
+######- using both PE and MP libraries
+
+* Then, create a different config file to use both read libraries `cp test_cp/cleanreads.txt test_cp/assembly_mp` 
+and edit it reordering rows so that testPE is number 1:
+
+    > 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+    
+    > 2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
 
 * Assemble cp genome combining PE + MP libraries (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
-./2_assemble_reads.pl --PEfile cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz \
-  --PEinsert 221 --ref ../reference.fna \
-  --MPfile cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz --MPinsert 4295 
+./2_assemble_reads.pl test_cp assembly_mp --ref reference.fna
 ```
+
+##### Example of de-novo assembly
+
+* Fish cp reads from WGS library
+
+`./0_get_cp_reads.pl test test_cp_noref poaceae.fna`
+
+* clean and trim reads to remove poor quality segments
+
+`./1_cleanreads.pl -folder test_cp_noref `
+
+* Create config file test_cp_noref/assembly_pe `cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe`
+and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP reads; see previous examples).
+
+    > In this case we are leaving a single PE library, and note that we have to provide orientation
+    > and insert size (FR and 221 in this example):
+    
+    > 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+
+* Finally, assemble cp genome
+
+`./2_assemble_reads.pl test_cp_noref assembly_pe --ref noref`
+
+###### For more info and parameters of the scripts see [README.txt](README.txt)
+
+In addition, examples yielding assembled data could be run following the steps at:
+
+- HOWTO_brachy.txt: assembly with Brachypodium Bd21 data (PE).
+- HOWTO_barley.txt: assembly with barley cultivar Morex data (PE + MP).
 
 ## Post-assembly inspection
 
