@@ -9,7 +9,7 @@
 #3) Fundacion ARAID, Zaragoza, Spain
 
 use strict;
-use Getopt::Std;
+use Getopt::Long;
 use FindBin '$Bin';
 
 my $CPUTHREADS = 4; # number of CPU threads to be used for parallele jobs
@@ -31,39 +31,38 @@ my $SPLITPAIRSEXE = $BINPATH.'/split_pairs_v0.5/split_pairs.pl';
 my $MUSKETEXE     = $BINPATH.'/musket-1.0.6/musket';
 my $BWAEXE        = $BINPATH.'/bwa-0.7.6a/bwa';
 
-my ($inpDIR,$refFASTA,$skipCorr,$custom_regex,%opts) = ('','',0,'');
+my ($inpDIR,$refFASTA,$skipCorr,$custom_regex,$help,%opts) = (undef,undef,0,'');
 
-getopts('hsR:r:f:', \%opts);
+usage() if(@ARGV < 1 ||
+  !GetOptions(
+    'help|h'   => \$help,
+    'folder=s' => \$inpDIR,
+    'ref=s'    => \$refFASTA,
+    'skip'     => \$skipCorr,
+    'regex=s'  => \$custom_regex) || defined($help) );
 
-if(($opts{'h'})||(scalar(keys(%opts))==0))
+sub usage
 {
-  print "\nusage: $0 [options]\n\n";
-  print "-h this message\n";
-  print "-f folder with cp read files, results will be added there  (required)\n";
-  print "-r reference genome FASTA file                             (optional, by default uses no reference)\n";
-  print "-s skip Musket error correction                            (optional)\n";
-  print "-R custom regex matching FASTQ headers to call read pairs  (optional, example: -R \"(^.*?)\s([12])\")\n\n";
-  exit(0);
+    print "\nusage: $0 [options]\n\n";
+    print "-h this message\n";
+    print "--folder  folder with cp read files, results will be added there  (required)\n";
+    print "--ref     reference genome FASTA file                             (optional, by default uses no reference)\n";
+    print "--skip    skip Musket error correction                            (optional, by default Musket is run)\n";
+    print "--regex   custom regex matching FASTQ headers to call read pairs  (optional, example: --regex \"(^.*?)\s([12])\")\n\n";
+    exit(-1);
 }
 
-if(defined($opts{'f'}))
+if(!defined($inpDIR) || (!-e $inpDIR))
 {  
-  $inpDIR = $opts{'f'}; 
-  die "# EXIT : need a valid -f read folder\n" if(!-e $inpDIR);
+  die "# EXIT : need a valid -f read folder\n";
 }
-else{ die "# EXIT : need a valid -f read folder\n"; }
 
-if(defined($opts{'r'}))
+if(defined($refFASTA) && (!-s $refFASTA))
 {
-  $refFASTA = $opts{'r'};
-  die "# EXIT : need a valid -r reference file\n" if(!-s $refFASTA);
+  die "# EXIT : need a valid -r reference file\n";
 }  
 
-if(defined($opts{'s'})){ $skipCorr = 1 }
-
-if(defined($opts{'R'})){ $custom_regex = $opts{'R'} }
-
-print "# input_folder=$inpDIR\nreference=$refFASTA\nskipCorr=$skipCorr\ncustom_regex='$custom_regex'\n";
+print "# input_folder=$inpDIR\n# reference=$refFASTA\n# skip=$skipCorr\n# custom_regex='$custom_regex'\n";
 print "# TRIM5=$TRIM5 TRIM3=$TRIM3 MINREADLENGTH=$MINREADLENGTH MINSURVIVALRATE=$MINSURVIVALRATE\n\n";
 
 #################################################
