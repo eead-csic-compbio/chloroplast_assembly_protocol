@@ -62,13 +62,13 @@ MP libraries are expected to be RF but can be set to FR as well.
 
 * Clean and trim reads to remove poor quality segments; output includes mean insert sizes and orientations (see [flowchart](./pics/0_get_cp_reads_1_cleanreads.png)):
 ```{shell}  
-./1_cleanreads.pl test_cp reference.fna 
+./1_cleanreads.pl -folder test_cp -ref reference.fna 
 ```
 
 * Create a config file "test_cp/assembly_pe" `cp test_cp/cleanreads.txt test_cp/assembly_pe`
 and edit it leaving only one row:
 
-    > \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+    > 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
 
 ######- using a single PE library
 
@@ -81,9 +81,9 @@ and edit it leaving only one row:
 * Then, create a different config file to use both read libraries `cp test_cp/cleanreads.txt test_cp/assembly_mp` 
 and edit it reordering rows so that testPE is number #1:
 
-    > \#1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
+    > 1 testPE cp-testPE.wind15_28.3crop70.mlen60.corr.12.fq.gz FR 221 Sanger
     
-    > \#2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
+    > 2 testMP cp-testMP.wind15_28.3crop70.mlen60.corr.12.fq.gz RF 4295 Sanger
 
 * Assemble cp genome combining PE + MP libraries (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
@@ -98,7 +98,7 @@ and edit it reordering rows so that testPE is number #1:
 
 * clean and trim reads to remove poor quality segments
 
-`./1_cleanreads.pl test_cp_noref noref`
+`./1_cleanreads.pl -folder test_cp_noref `
 
 * Create config file test_cp_noref/assembly_pe `cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe`
 and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP reads; see previous examples).
