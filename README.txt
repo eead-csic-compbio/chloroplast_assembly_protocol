@@ -43,7 +43,7 @@ samtools 0.1.19 [http://samtools.sourceforge.net]
 ./0_get_cp_reads.pl INPUT_DIR WORKING_DIR FASTA_CP_GENOMES
 ./1_cleanreads.pl -folder WORKING_DIR [-ref FASTA_REF_GENOME] [-skip] [-regex REGEX]
 # Create config file ("ASSEMBLYCONF containing ASSEMBLY_NAME")
-./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME -ref FASTA_REF_GENOME
+./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME -ref FASTA_REF_GENOME [-outdir OUTPUT_DIR]
 
 2. Test run
 ===========
@@ -171,7 +171,7 @@ my $MINSURVIVALRATE = 50; # a warning will be used if less than these %reads sur
 A script to assemble the reads into new chloroplast contig or contigs.
 
 ./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME -ref FASTA_REF_GENOME
-[--threads FLOAT] [--sample INTEGER] [--kmer INTEGER] [--outdir OUTPUT_DIR]
+[-threads FLOAT] [-sample INTEGER] [-kmer INTEGER] [-outdir OUTPUT_DIR]
 
 - WORKING_DIR: a path to a directory with input files (the one created in the previous script).
 It will be used as output directory also, if --outdir option is not used (see below).
@@ -179,7 +179,7 @@ It will be used as output directory also, if --outdir option is not used (see be
 - -threads FLOAT: number of CPU threads to use.
 - -sample INTEGER: number of reads to be used for the assembly.
 - -kmer INTEGER: k-mer size for Velvet assembler.
-- -outdir WORKING_DIR: a path to a directory to store output files.
+- -outdir OUTPUT_DIR: a path to a directory to store output files. By default a new directory is created under WORKING_DIR.
 
 Other parameters could be changed by editing the script 1_cleanreads.pl.
 

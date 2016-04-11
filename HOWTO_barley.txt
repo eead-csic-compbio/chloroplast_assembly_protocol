@@ -49,5 +49,5 @@ cp cp_reads_barley/cleanreads.txt cp_reads_barley/assembly_denovo
 2 ERR126133 cp-ERR126133.wind15_28.3crop44.mlen40.corr.12.fq.gz RF 2364 Sanger
 
 # 5.3) assemble reads -ref
-$CHLOROP/2_assemble_reads.pl cp_reads_barley assembly_denovo -ref noref -outdir cp_reads_barley/denovo/
-# final assembly: cp_reads_barley/denovo/gapfiller.gapfilled.final.fa
+$CHLOROP/2_assemble_reads.pl cp_reads_barley assembly_denovo
+# final assembly: cp_reads_barley/assembly_denovo_kmer47_sample500000/gapfiller.gapfilled.final.fa

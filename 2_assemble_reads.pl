@@ -38,7 +38,7 @@ my $MPinsert   = 0;
 my $MPorient   = 'RF';    # default orientation of MP reads
 my $MPencoding = 'Sanger';
 my $outDIR     = ''; 
-my $refFASTA   = '';
+my $refFASTA   = undef;
 my $help;
 
 usage() if(@ARGV < 2 || 
@@ -57,11 +57,11 @@ sub usage
   print   "./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME [Options] \n";
   print   "\nOptions:\n";
   print   "-h this message\n";
-  print   "--ref      reference genome in FASTA format of \"noref\"             (required)\n"; 
-  print   "--threads  number of CPU threads to use                 (optional, default=$CPUTHREADS)\n"; 
-  print   "--sample   number of reads to be assembled              (optional, default=$SAMPLESIZE)\n";
-  print   "--kmer     k-mer size for Velvet assembler              (optional, default=$KMER)\n"; 
-  print   "--outdir   folder to store results                      (optional, default=assembly_kmer$KMER\_sample$SAMPLESIZE)\n\n";
+  print   "--ref      reference genome in FASTA format            (optional, by default performs de-novo assembly)\n"; 
+  print   "--threads  number of CPU threads to use                (optional, default=$CPUTHREADS)\n"; 
+  print   "--sample   number of reads to be assembled             (optional, default=$SAMPLESIZE)\n";
+  print   "--kmer     k-mer size for Velvet assembler             (optional, default=$KMER)\n"; 
+  print   "--outdir   folder to store results                     (optional, default=assembly_kmer$KMER\_sample$SAMPLESIZE)\n\n";
   exit(-1);
 }
 
@@ -74,8 +74,8 @@ print "Config file=$configfile\n";
 
 if(!-s $configfile){die "\n# $0 : A config file is needed for the assembly \n\t(see README and $workingDIR/cleanreads.txt)\n";}
 
-if($refFASTA ne "noref" && (!$refFASTA || !-s $refFASTA))
-{ die "\n# $0 : need a valid --ref FASTA file, exit\n"; }
+if(defined($refFASTA) && (!-s $refFASTA))
+{ die "\n# $0 : need a valid -ref FASTA file, exit\n"; }
 
 if(!$outDIR){ $outDIR = "$configfile\_kmer$KMER\_sample$SAMPLESIZE" }
 if(!-s $outDIR){ mkdir($outDIR) }
@@ -261,7 +261,7 @@ if($MPfile)
   }
 }
 
-if ($refFASTA ne "noref"){
+if (defined($refFASTA)){
 	### 2) map reads to reference prior to assembly
 	$samfile = $outDIR.'PE.sam';
 	$logfile = $outDIR.'PE.bwa.log';
@@ -300,70 +300,70 @@ if ($refFASTA ne "noref"){
 
 ## Reference-guided assembly (RGA)
 ##################################
-if ($refFASTA ne "noref"){
-# 3.1) make kmer hash table with reads mapped to split chloroplast reference
-$velvet_cmd = "$VELVETH $outDIR $KMER -reference $refFASTA -shortPaired -sam $samfile";
-if($MPfile)
-{
-  $velvet_cmd .= " -shortPaired2 -sam $samfileMP";
-}
+if (defined($refFASTA)){
+  # 3.1) make kmer hash table with reads mapped to split chloroplast reference
+  $velvet_cmd = "$VELVETH $outDIR $KMER -reference $refFASTA -shortPaired -sam $samfile";
+  if($MPfile)
+  {
+    $velvet_cmd .= " -shortPaired2 -sam $samfileMP";
+  }
+  
+  print "# velveth command:\n$velvet_cmd\n";
+  open(VELVETH,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
+  while(<VELVETH>){ }
+  close(VELVETH);
+  
+  # 3.2) assemble hashed kmers with proper insert size
+  $velvet_cmd = "$VELVETG $outDIR -ins_length $PEinsert $VELVETGPARAMS";
+  #Final graph has 19 nodes and n50 of 22447, max 29336, total 131522, using 476527/483841 reads
+  
+  if($MPfile)
+  {
+    $velvet_cmd .= " -ins_length2 $MPinsert -shortMatePaired2 yes";
+    #Final graph has 14 nodes and n50 of 75334, max 75334, total 134474, using 925984/984681 reads
+  }
+  
+  print "# velvetg command:\n$velvet_cmd\n";
+  open(VELVETG,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
+  while(<VELVETG>)
+  { 
+	  print if(/^Final graph/);
+  }
+  close(VELVETG);#system("head $outDIR/stats.txt"); 	
 
-print "# velveth command:\n$velvet_cmd\n";
-open(VELVETH,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
-while(<VELVETH>){ }
-close(VELVETH);
-
-# 3.2) assemble hashed kmers with proper insert size
-$velvet_cmd = "$VELVETG $outDIR -ins_length $PEinsert $VELVETGPARAMS";
-#Final graph has 19 nodes and n50 of 22447, max 29336, total 131522, using 476527/483841 reads
-
-if($MPfile)
-{
-  $velvet_cmd .= " -ins_length2 $MPinsert -shortMatePaired2 yes";
-  #Final graph has 14 nodes and n50 of 75334, max 75334, total 134474, using 925984/984681 reads
-}
-
-print "# velvetg command:\n$velvet_cmd\n";
-open(VELVETG,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
-while(<VELVETG>)
-{ 
-	print if(/^Final graph/);
-}
-close(VELVETG);#system("head $outDIR/stats.txt"); 
-
-}else { #if ($refFASTA eq "noref"){
-## De-novo assembly
-###################
-
-# 3.1) make kmer hash table with reads mapped to split chloroplast reference
-$velvet_cmd = "$VELVETH $outDIR $KMER -shortPaired -fastq -interleaved $samplefile";
-if($MPfile)
-{
-  $velvet_cmd .= " -shortPaired2 -fastq -separate $pair1fileMP $pair2fileMP";
-}
-
-print "# velveth command:\n$velvet_cmd\n";
-open(VELVETH,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
-while(<VELVETH>){ }
-close(VELVETH);
-
-# 3.2) assemble hashed kmers with proper insert size
-$velvet_cmd = "$VELVETG $outDIR -ins_length $PEinsert $VELVETGPARAMS";
-#Final graph has 19 nodes and n50 of 22447, max 29336, total 131522, using 476527/483841 reads
-
-if($MPfile)
-{
-  $velvet_cmd .= " -ins_length2 $MPinsert -shortMatePaired2 yes";
-  #Final graph has 14 nodes and n50 of 75334, max 75334, total 134474, using 925984/984681 reads
-}
-
-print "# velvetg command:\n$velvet_cmd\n";
-open(VELVETG,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
-while(<VELVETG>)
-{ 
-        print if(/^Final graph/);
-}
-close(VELVETG);#system("head $outDIR/stats.txt");
+}else { #if (!defined($refFASTA)){
+  ## De-novo assembly
+  ###################
+  
+  # 3.1) make kmer hash table with reads mapped to split chloroplast reference
+  $velvet_cmd = "$VELVETH $outDIR $KMER -shortPaired -fastq -interleaved $samplefile";
+  if($MPfile)
+  {
+    $velvet_cmd .= " -shortPaired2 -fastq -separate $pair1fileMP $pair2fileMP";
+  }
+  
+  print "# velveth command:\n$velvet_cmd\n";
+  open(VELVETH,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
+  while(<VELVETH>){ }
+  close(VELVETH);
+  
+  # 3.2) assemble hashed kmers with proper insert size
+  $velvet_cmd = "$VELVETG $outDIR -ins_length $PEinsert $VELVETGPARAMS";
+  #Final graph has 19 nodes and n50 of 22447, max 29336, total 131522, using 476527/483841 reads
+  
+  if($MPfile)
+  {
+    $velvet_cmd .= " -ins_length2 $MPinsert -shortMatePaired2 yes";
+    #Final graph has 14 nodes and n50 of 75334, max 75334, total 134474, using 925984/984681 reads
+  }
+  
+  print "# velvetg command:\n$velvet_cmd\n";
+  open(VELVETG,"$velvet_cmd |") || die "# cannot run $velvet_cmd\n";
+  while(<VELVETG>)
+  { 
+	  print if(/^Final graph/);
+  }
+  close(VELVETG);#system("head $outDIR/stats.txt");
 }
 ## Output file
 $finalfile = "$outDIR/contigs.fa";

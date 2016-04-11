@@ -30,5 +30,5 @@ $CHLOROP/2_assemble_reads.pl cp_reads_brachy assembly_pe -ref $CHLOROP/reference
 # final assembly: cp_reads_brachy/assembly_pe_kmer47_sample500000/gapfiller.gapfilled.final.fa
 
 # 7) assemble reads -ref
-$CHLOROP/2_assemble_reads.pl cp_reads_brachy assembly_pe -ref noref -outdir cp_reads_brachy/denovo/
+$CHLOROP/2_assemble_reads.pl cp_reads_brachy assembly_pe -outdir cp_reads_brachy/denovo/
 # final assembly: cp_reads_brachy/denovo/sspace.final.scaffolds.fasta
