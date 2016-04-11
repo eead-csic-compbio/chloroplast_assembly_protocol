@@ -5,9 +5,9 @@ wget -c ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR547/SRR547945/SRR547945_1.fastq.gz
 wget -c ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR547/SRR547945/SRR547945_2.fastq.gz
 
 # 2) put raw reads in folder and uncompress
-mkdir raw_reads
-mv SRR547945_*gz raw_reads
-cd raw_reads
+mkdir raw_reads_brachy
+mv SRR547945_*gz raw_reads_brachy
+cd raw_reads_brachy
 zcat SRR547945_* > SRR547945.fastq # (4.1 GB)
 rm -f SRR547945_*gz
 cd ..
@@ -15,18 +15,20 @@ cd ..
 # 3) extract cp reads to cp_reads folder
 # $CHLOROP is an env variable which points to the install directory of this protocol
 
-$CHLOROP/0_get_cp_reads.pl raw_reads cp_reads $CHLOROP/poaceae.fna
+$CHLOROP/0_get_cp_reads.pl raw_reads_brachy cp_reads_brachy $CHLOROP/poaceae.fna
 
 # 4) clean reads
-$CHLOROP/1_cleanreads.pl -folder cp_reads -ref $CHLOROP/reference.fna
+$CHLOROP/1_cleanreads.pl -folder cp_reads_brachy -ref $CHLOROP/reference.fna
 
-# 5) create config file -> cp_reads/assembly_pe
+# 5) create config file:
+cp cp_reads_brachy/clean_reads.txt cp_reads_brachy/assembly_pe
+#    which should read:
 1 testPE cp-SRR547945.wind15_28.3crop94.mlen60.corr.12.fq.gz FR 166 Sanger
 
 # 6) assemble reads +ref
-$CHLOROP/2_assemble_reads.pl cp_reads assembly_pe -ref $CHLOROP/reference.fna
-# final assembly: cp-SRR547945.wind15_28.3crop94.mlen60.corr.12.sspace.final.scaffolds.fasta
+$CHLOROP/2_assemble_reads.pl cp_reads_brachy assembly_pe -ref $CHLOROP/reference.fna
+# final assembly: cp_reads_brachy/assembly_pe_kmer47_sample500000/gapfiller.gapfilled.final.fa
 
 # 7) assemble reads -ref
-$CHLOROP/2_assemble_reads.pl cp_reads assembly_pe -ref noref
-# final assembly: cp-SRR547945.wind15_28.3crop94.mlen60.corr.12.sspace.final.scaffolds.fasta
+$CHLOROP/2_assemble_reads.pl cp_reads_brachy assembly_pe -ref noref -outdir cp_reads_brachy/denovo/
+# final assembly: cp_reads_brachy/denovo/sspace.final.scaffolds.fasta

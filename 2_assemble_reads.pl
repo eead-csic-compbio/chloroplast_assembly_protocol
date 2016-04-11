@@ -81,6 +81,11 @@ if(!$outDIR){ $outDIR = "$configfile\_kmer$KMER\_sample$SAMPLESIZE" }
 if(!-s $outDIR){ mkdir($outDIR) }
 else{ print "# re-using existing output folder '$outDIR'\n\n"; }
 
+if (substr($outDIR, -1) ne "/"){
+  $outDIR = $outDIR."/";
+}
+
+
 printf("\n# %s %s --ref %s --PEenc %s \\\n".
       "#  --MPenc %s \\\n".
       "#  --threads %d --sample %d --kmer %d --outdir %s\n\n",
@@ -97,7 +102,7 @@ close(COMMAND);
       
 #############################################################  
   
-my ($nlines,$enc,$encMP,$root,$rootMP,$rootSS,$gapsOK,$velvet_cmd,@trash);
+my ($nlines,$enc,$encMP,$rootMP,$rootSS,$gapsOK,$velvet_cmd,@trash);
 my ($intlfileMP,$pair1fileMP,$pair2fileMP,$samplefileMP,$samfileMP,$logfileMP);
 my ($pair1file,$pair2file,$spaceparamfile,$gapparamfile,$finalfile);
 my ($infile,$samplefile,$samfile,$logfile,$tmpfile,$intlfile);
@@ -122,7 +127,7 @@ if ($filei eq "1"){ ## PE mandatory file
 		$PEinsert = $fileinssize;
 	}
 	print "PEinsSize\t$PEinsert\n";
-	print "$fileorient\n";
+	
 	if($fileorient ne 'FR')
 	{ die "\n# $0 : valid orientation for PE library is RF, exit\n"; }
 	print "PEorient\t$fileorient\n";
@@ -160,10 +165,7 @@ close(TMP);
 
 ## 0) check main input file and params
 $infile = $PEfile;
-$root = $outDIR."/";
 $rootSS = $workingDIR."_".$configname."\_kmer".$KMER."\_sample".$SAMPLESIZE;
-#$root = basename($infile);
-#$root =~ s/\.fq\.gz//;
   
 if($PEencoding eq '1.5'){ $enc = 'Phred+64' }
 else{ $enc = 'Phred+33' } 
@@ -176,11 +178,11 @@ else{ $encMP = 'Phred+33' }
 # 1.1) compulsory PE reads
 $nlines = $SAMPLESIZE * 8; # 4 for F read and 4 for R
 
-$tmpfile = $root.'PE.tmp';
-$intlfile = $root .'PE.pairs.fq';
-$pair1file = $root .'PE.1.fq';
-$pair2file = $root .'PE.2.fq';
-$samplefile = $root .'PE.sample.fq';
+$tmpfile = $outDIR.'PE.tmp';
+$intlfile = $outDIR.'PE.pairs.fq';
+$pair1file = $outDIR.'PE.1.fq';
+$pair2file = $outDIR.'PE.2.fq';
+$samplefile = $outDIR.'PE.sample.fq';
 
 system("zcat $infile | head -$nlines > $tmpfile");
 system("$SPLITEXE -n -i $tmpfile -l $intlfile");
@@ -206,21 +208,19 @@ if($enc eq 'Phred+64')
 	close(TMP);
 	close(SAMPLE);
 }
-else{ unlink($samplefile); system("ln -s $intlfile $samplefile"); }
+else{ unlink($samplefile); system("ln -s ".basename($intlfile)." $samplefile"); }
 
-push(@trash,$intlfile,$pair1file,$pair2file,$samplefile);
+push(@trash,$pair1file,$pair2file,$intlfile,$samplefile);
 
 # 1.2) optional MP reads
 if($MPfile)
 {
-  $rootMP = $root;
-  #$rootMP = basename($MPfile);
-  #$rootMP =~ s/\.fq\.gz//;
+  $rootMP = $outDIR;
 
-  $intlfileMP = $rootMP .'MP.pairs.fq';
-  $pair1fileMP = $rootMP .'MP.1.fq';
-  $pair2fileMP = $rootMP .'MP.2.fq';
-  $samplefileMP = $rootMP .'MP.sample.fq';
+  $intlfileMP = $rootMP.'MP.pairs.fq';
+  $pair1fileMP = $rootMP.'MP.1.fq';
+  $pair2fileMP = $rootMP.'MP.2.fq';
+  $samplefileMP = $rootMP.'MP.sample.fq';
 
   system("zcat $MPfile | head -$nlines > $tmpfile");
   system("$SPLITEXE -n -i $tmpfile -l $intlfileMP");
@@ -245,7 +245,7 @@ if($MPfile)
 	  close(TMP);
 	  close(SAMPLE);
   }
-  else{ unlink($samplefileMP); system("ln -s $intlfileMP $samplefileMP"); }
+  else{ unlink($samplefileMP); system("ln -s ".basename($intlfileMP)." $samplefileMP"); }
 
   push(@trash,$intlfileMP,$pair1fileMP,$pair2fileMP,$samplefileMP);
 
@@ -255,16 +255,16 @@ if($MPfile)
 	  system("$SEQTKEXE -r $pair1fileMP > $rootMP"."MP.rc.1.fq");
 	  system("$SEQTKEXE -r $pair2fileMP > $rootMP"."MP.rc.2.fq");
 	  unlink($pair1fileMP,$pair2fileMP);
-    $pair1fileMP = $rootMP .'MP.rc.1.fq';
-    $pair2fileMP = $rootMP .'MP.rc.2.fq';
+    $pair1fileMP = $rootMP.'MP.rc.1.fq';
+    $pair2fileMP = $rootMP.'MP.rc.2.fq';
     push(@trash,$pair1fileMP,$pair2fileMP);
   }
 }
 
 if ($refFASTA ne "noref"){
 	### 2) map reads to reference prior to assembly
-	$samfile = $root . 'PE.sam';
-	$logfile = $root . 'PE.bwa.log';
+	$samfile = $outDIR.'PE.sam';
+	$logfile = $outDIR.'PE.bwa.log';
 
 	system("$BWAEXE index $refFASTA"); 
   
@@ -281,8 +281,8 @@ if ($refFASTA ne "noref"){
 
 	if($MPfile)
 	{
-	  $samfileMP = $rootMP . 'MP.sam';
-	  $logfileMP = $rootMP . 'MP.bwa.log';
+	  $samfileMP = $rootMP.'MP.sam';
+	  $logfileMP = $rootMP.'MP.bwa.log';
 
 	  print "# BWA command:\n$BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP > $samfileMP 2> $logfileMP\n";
 	  open(BWA,"$BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP > $samfileMP 2> $logfileMP |")
@@ -374,8 +374,8 @@ if(!-s $finalfile)
 }  
 
 ## 4) make scaffolds and fill gaps
-$spaceparamfile = $root .'sspace.params';
-$gapparamfile = $root .'gapfiller.params';
+$spaceparamfile = $outDIR.'sspace.params';
+$gapparamfile = $outDIR.'gapfiller.params';
 
 # 4.1) create scaffolding parameter file
 # http://www.vcru.wisc.edu/simonlab/bioinformatics/programs/sspace/F132-01%20SSPACE_Basic_User_Manual_v2.0.pdf
@@ -428,9 +428,9 @@ if($gapsOK)
        mv ".$rootSS.".gapfiller/\$line ".$outDIR."/\$filename; done");
   system("rm -rf ".$rootSS.".gapfiller");
 
-  $finalfile = $outDIR."/gapfiller.gapfilled.final.fa";
+  $finalfile = $outDIR."gapfiller.gapfilled.final.fa";
 }
-else{ $finalfile = "$root"."sspace.final.scaffolds.fasta" }
+else{ $finalfile = $outDIR."sspace.final.scaffolds.fasta" }
 
 print "\n# final assembly: $finalfile\n\n";
 
