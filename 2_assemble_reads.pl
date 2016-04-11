@@ -116,36 +116,44 @@ print "$_\n";
 if ($filei eq "1"){ ## PE mandatory file
 	$PEfile="$workingDIR/$filefinal";
 	if ($fileinssize eq "nd"){
-		if (!$PEinsert || $PEinsert < 1){die "\n# $0 : need --PEinsert, exit\n";}
+		if (!$PEinsert || $PEinsert < 1){die "\n# $0 : need a valid PE insert size, exit\n";}
 		#$PEinsert = $PEinsert;
 	} else {
 		$PEinsert = $fileinssize;
 	}
 	print "PEinsSize\t$PEinsert\n";
+	
+	if($fileorient ne 'RF')
+	{ die "\n# $0 : valid orientation for PE library is RF, exit\n"; }
+	print "PEorient\t$fileorient\n";
+	
 	$PEencoding=$fileencoding;
 	if($PEencoding ne 'Sanger' && $PEencoding ne '1.5')
 	{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
+	print "PEencoding\t$PEencoding\n";
 }
 if ($filei eq "2"){ ## MP optional file
         $MPfile="$workingDIR/$filefinal";
         if ($fileinssize eq "nd"){
-                if (!$MPinsert || $MPinsert < 1){die "\n# $0 : need --MPinsert, exit\n";}
+                if (!$MPinsert || $MPinsert < 1){die "\n# $0 : need a valid MP insert size, exit\n";}
         } else {
                 $MPinsert = $fileinssize;
         }
         print "MPinsSize\t$MPinsert\n";
+	
 	if ($fileorient eq "nd"){
-		if (!$MPorient || $MPorient eq ""){die "\n# $0: need --MPorient, exit\n";}
+		if (!$MPorient || $MPorient eq ""){die "\n# $0: need MP orientation, exit\n";}
 	} else {
 		$MPorient = $fileorient;
 	}
 	if($MPorient ne 'RF' && $MPorient ne 'FR')
-	{ die "\n# $0 : valid orientations are: FR|RF, exit\n"; }
-	
+	{ die "\n# $0 : valid orientations for MP library are: FR|RF, exit\n"; }
 	print "MPorient\t$MPorient\n";
+	
 	$MPencoding=$fileencoding;
 	if($MPencoding ne 'Sanger' && $MPencoding ne '1.5')
 	{ die "\n# $0 : valid encodings are: Sanger|1.5, see [https://en.wikipedia.org/wiki/FASTQ_format]\n"; }
+	print "MPencoding\t$MPencoding\n";
 }
 }
 close(TMP);
