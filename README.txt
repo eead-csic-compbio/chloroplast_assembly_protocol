@@ -218,6 +218,7 @@ by FastQC (run by 1_cleanreads.pl). If no known encoding is found, it is set to 
 Nonetheless, this field could be edited in the config files, to either "Sanger" (Phred+33) or
 "1.5" (Phred+64), according to the encoding of the Fastq files being used as input.
 
+
 5. Post-assembly inspection
 ===========================
 
