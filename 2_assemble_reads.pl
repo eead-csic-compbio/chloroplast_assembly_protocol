@@ -122,8 +122,8 @@ if ($filei eq "1"){ ## PE mandatory file
 		$PEinsert = $fileinssize;
 	}
 	print "PEinsSize\t$PEinsert\n";
-	
-	if($fileorient ne 'RF')
+	print "$fileorient\n";
+	if($fileorient ne 'FR')
 	{ die "\n# $0 : valid orientation for PE library is RF, exit\n"; }
 	print "PEorient\t$fileorient\n";
 	
