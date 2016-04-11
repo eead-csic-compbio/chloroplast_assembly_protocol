@@ -97,7 +97,7 @@ close(COMMAND);
       
 #############################################################  
   
-my ($nlines,$enc,$encMP,$root,$rootMP,$gapsOK,$velvet_cmd,@trash);
+my ($nlines,$enc,$encMP,$root,$rootMP,$rootSS,$gapsOK,$velvet_cmd,@trash);
 my ($intlfileMP,$pair1fileMP,$pair2fileMP,$samplefileMP,$samfileMP,$logfileMP);
 my ($pair1file,$pair2file,$spaceparamfile,$gapparamfile,$finalfile);
 my ($infile,$samplefile,$samfile,$logfile,$tmpfile,$intlfile);
@@ -160,8 +160,10 @@ close(TMP);
 
 ## 0) check main input file and params
 $infile = $PEfile;
-$root = basename($infile);
-$root =~ s/\.fq\.gz//;
+$root = $outDIR."/";
+$rootSS = $workingDIR."_".$configname."\_kmer".$KMER."\_sample".$SAMPLESIZE;
+#$root = basename($infile);
+#$root =~ s/\.fq\.gz//;
   
 if($PEencoding eq '1.5'){ $enc = 'Phred+64' }
 else{ $enc = 'Phred+33' } 
@@ -174,11 +176,11 @@ else{ $encMP = 'Phred+33' }
 # 1.1) compulsory PE reads
 $nlines = $SAMPLESIZE * 8; # 4 for F read and 4 for R
 
-$tmpfile = $root.'.tmp';
-$intlfile = $root .'.pairs.fq';
-$pair1file = $root .'.1.fq';
-$pair2file = $root .'.2.fq';
-$samplefile = $root .'.sample.fq';
+$tmpfile = $root.'PE.tmp';
+$intlfile = $root .'PE.pairs.fq';
+$pair1file = $root .'PE.1.fq';
+$pair2file = $root .'PE.2.fq';
+$samplefile = $root .'PE.sample.fq';
 
 system("zcat $infile | head -$nlines > $tmpfile");
 system("$SPLITEXE -n -i $tmpfile -l $intlfile");
@@ -211,13 +213,14 @@ push(@trash,$intlfile,$pair1file,$pair2file,$samplefile);
 # 1.2) optional MP reads
 if($MPfile)
 {
-  $rootMP = basename($MPfile);
-  $rootMP =~ s/\.fq\.gz//;
+  $rootMP = $root;
+  #$rootMP = basename($MPfile);
+  #$rootMP =~ s/\.fq\.gz//;
 
-  $intlfileMP = $rootMP .'.pairs.fq';
-  $pair1fileMP = $rootMP .'.1.fq';
-  $pair2fileMP = $rootMP .'.2.fq';
-  $samplefileMP = $rootMP .'.sample.fq';
+  $intlfileMP = $rootMP .'MP.pairs.fq';
+  $pair1fileMP = $rootMP .'MP.1.fq';
+  $pair2fileMP = $rootMP .'MP.2.fq';
+  $samplefileMP = $rootMP .'MP.sample.fq';
 
   system("zcat $MPfile | head -$nlines > $tmpfile");
   system("$SPLITEXE -n -i $tmpfile -l $intlfileMP");
@@ -249,19 +252,19 @@ if($MPfile)
   if($MPorient eq 'RF') # get rc of mate pairs
   {
     print "# getting rc of MP reads ...\n";
-	  system("$SEQTKEXE -r $pair1fileMP > $rootMP.rc.1.fq");
-	  system("$SEQTKEXE -r $pair2fileMP > $rootMP.rc.2.fq");
+	  system("$SEQTKEXE -r $pair1fileMP > $rootMP"."MP.rc.1.fq");
+	  system("$SEQTKEXE -r $pair2fileMP > $rootMP"."MP.rc.2.fq");
 	  unlink($pair1fileMP,$pair2fileMP);
-    $pair1fileMP = $rootMP .'.rc.1.fq';
-    $pair2fileMP = $rootMP .'.rc.2.fq';
+    $pair1fileMP = $rootMP .'MP.rc.1.fq';
+    $pair2fileMP = $rootMP .'MP.rc.2.fq';
     push(@trash,$pair1fileMP,$pair2fileMP);
   }
 }
 
 if ($refFASTA ne "noref"){
 	### 2) map reads to reference prior to assembly
-	$samfile = $root . '.sam';
-	$logfile = $root . '.bwa.log';
+	$samfile = $root . 'PE.sam';
+	$logfile = $root . 'PE.bwa.log';
 
 	system("$BWAEXE index $refFASTA"); 
   
@@ -278,8 +281,8 @@ if ($refFASTA ne "noref"){
 
 	if($MPfile)
 	{
-	  $samfileMP = $rootMP . '.sam';
-	  $logfileMP = $rootMP . '.bwa.log';
+	  $samfileMP = $rootMP . 'MP.sam';
+	  $logfileMP = $rootMP . 'MP.bwa.log';
 
 	  print "# BWA command:\n$BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP > $samfileMP 2> $logfileMP\n";
 	  open(BWA,"$BWAEXE mem -t $CPUTHREADS $refFASTA $pair1fileMP $pair2fileMP > $samfileMP 2> $logfileMP |")
@@ -371,8 +374,8 @@ if(!-s $finalfile)
 }  
 
 ## 4) make scaffolds and fill gaps
-$spaceparamfile = $root .'.sspace.params';
-$gapparamfile = $root .'.gapfiller.params';
+$spaceparamfile = $root .'sspace.params';
+$gapparamfile = $root .'gapfiller.params';
 
 # 4.1) create scaffolding parameter file
 # http://www.vcru.wisc.edu/simonlab/bioinformatics/programs/sspace/F132-01%20SSPACE_Basic_User_Manual_v2.0.pdf
@@ -386,21 +389,22 @@ if($MPfile)
 close(PARAMS);
 
 # 4.2) merge contigs into scaffolds
-print "# SSPACE command:\n$SSPACEXE -T $CPUTHREADS -l $spaceparamfile -s $outDIR/contigs.fa -b $root.sspace\n";
-open(SSPACE,"$SSPACEXE -T $CPUTHREADS -l $spaceparamfile -s $outDIR/contigs.fa -b $root.sspace |\n") 
-|| die "# cannot run $SSPACEXE -T $CPUTHREADS -l $spaceparamfile -s $outDIR/contigs.fa -b $root.sspace\n";
+print "# SSPACE command:\n$SSPACEXE -T $CPUTHREADS -l $spaceparamfile -s $outDIR/contigs.fa -b ".$rootSS.".sspace\n";
+open(SSPACE,"$SSPACEXE -T $CPUTHREADS -l $spaceparamfile -s $outDIR/contigs.fa -b ".$rootSS.".sspace |\n") 
+|| die "# cannot run $SSPACEXE -T $CPUTHREADS -l $spaceparamfile -s $outDIR/contigs.fa -b ".$rootSS.".sspace\n";
 while(<SSPACE>){ }
 close(SSPACE);
 
 $gapsOK = 0;
-open(EVIDENCE,"$root.sspace.final.evidence") if(-s "$root.sspace.final.evidence");
+open(EVIDENCE,$rootSS.".sspace.final.evidence") if(-s $rootSS.".sspace.final.evidence");
 while(<EVIDENCE>)
 {
 	if(/gaps\d+/){ $gapsOK++ }
 }
 close(EVIDENCE);
-system("rm -rf bowtieoutput pairinfo reads intermediate_results"); 
-
+system("rm -rf bowtieoutput pairinfo reads intermediate_results");
+system("ls ".$rootSS.".sspace* | while read line; do filename=\$(echo \"\$line\" | sed 's#".$rootSS.".##'); \
+       mv \$line ".$outDIR."/\$filename; done");
 
 # 4.3) fill gaps if required
 if($gapsOK)
@@ -413,17 +417,20 @@ if($gapsOK)
   }
 	close(PARAMS);
 
-	print "# GAPFILLER command:\n$GAPFILLEXE -T $CPUTHREADS -l $gapparamfile -s $root.sspace.final.scaffolds.fasta -b $root.gapfiller\n";
-	open(GAPFILL,"$GAPFILLEXE -T $CPUTHREADS -l $gapparamfile -s $root.sspace.final.scaffolds.fasta -b $root.gapfiller |\n")
-  	|| die "# cannot run $GAPFILLEXE -T $CPUTHREADS -l $gapparamfile -s $root.sspace.final.scaffolds.fasta -b $root.gapfiller\n";
+	print "# GAPFILLER command:\n$GAPFILLEXE -T $CPUTHREADS -l $gapparamfile -s ".$outDIR."/sspace.final.scaffolds.fasta -b ".$rootSS.".gapfiller\n";
+	open(GAPFILL,"$GAPFILLEXE -T $CPUTHREADS -l $gapparamfile -s ".$outDIR."/sspace.final.scaffolds.fasta -b ".$rootSS.".gapfiller |\n")
+  	|| die "# cannot run $GAPFILLEXE -T $CPUTHREADS -l $gapparamfile -s ".$outDIR."/sspace.final.scaffolds.fasta -b ".$rootSS.".gapfiller\n";
 	while(<GAPFILL>){ }
 	close(GAPFILL);
 
-  system("rm -rf $root.gapfiller/alignoutput $root.gapfiller/reads $root.gapfiller/intermediate_results");
+  system("rm -rf ".$rootSS.".gapfiller/alignoutput ".$rootSS.".gapfiller/reads ".$rootSS.".gapfiller/intermediate_results");
+  system("ls ".$rootSS.".gapfiller* | while read line; do filename=\$(echo \"\$line\" | sed 's#".$rootSS.".##'); \
+       mv ".$rootSS.".gapfiller/\$line ".$outDIR."/\$filename; done");
+  system("rm -rf ".$rootSS.".gapfiller");
 
-  $finalfile = "$root.gapfiller/$root.gapfiller.gapfilled.final.fa";
+  $finalfile = $outDIR."/gapfiller.gapfilled.final.fa";
 }
-else{ $finalfile = "$root.sspace.final.scaffolds.fasta" }
+else{ $finalfile = "$root"."sspace.final.scaffolds.fasta" }
 
 print "\n# final assembly: $finalfile\n\n";
 
