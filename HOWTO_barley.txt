@@ -1,0 +1,53 @@
+# 1) Obtain PE and MP libraries from SRA using 'fastq-dump' from SRAtoolkit (https://github.com/ncbi/sra-tools)
+
+# PE-library (9.2 GB, IS:267, orient:FR, encoding:Sanger)
+fastq-dump --gzip -I --split-spot SRR491411
+
+# MP-library (3.8 GB, IS:2364, orient:RF, encoding:Sanger)
+fastq-dump --gzip -I --split-spot ERR126133
+# alternative ERR126134
+
+# 2) put raw reads in folder and uncompress
+
+mkdir raw_reads_barley;
+
+gunzip -c SRR491411.fastq.gz | head -240000000 > raw_reads_barley/SRR491411.fastq # (19 GB)
+rm -f SRR491411.fastq.gz;
+
+gunzip -c ERR126133.fastq.gz | head -120000000 > raw_reads_barley/ERR126133.fastq # (12 GB)
+rm -f ERR126133.fastq.gz;
+
+# 3) extract cp reads
+# $CHLOROP is an env variable which points to the install directory of this protocol
+
+$CHLOROP/0_get_cp_reads.pl raw_reads_barley cp_reads_barley $CHLOROP/poaceae.fna
+
+# 4) Reference-guided assembly
+# 4.1) clean reads
+$CHLOROP/1_cleanreads.pl -folder cp_reads_barley -ref $CHLOROP/reference_barley.fna
+
+# 4.2) create config file
+cp cp_reads_barley/cleanreads.txt cp_reads_barley/assembly_conf
+
+# Edit the file to contain the next:
+1 SRR491411 cp-SRR491411.wind15_28.3crop95.mlen40.corr.12.fq.gz FR 267 Sanger
+2 ERR126133 cp-ERR126133.wind15_28.3crop44.mlen40.corr.12.fq.gz RF 2364 Sanger
+
+# 4.3) assemble reads +ref
+$CHLOROP/2_assemble_reads.pl cp_reads_barley assembly_conf -ref $CHLOROP/reference.fna
+# final assembly: cp_reads_barley/assembly_conf_kmer47_sample500000/gapfiller.gapfilled.final.fa
+
+# 5) de-novo assembly
+# 5.1) clean reads
+$CHLOROP/1_cleanreads.pl -folder cp_reads_barley
+
+# 5.2) create config file
+cp cp_reads_barley/cleanreads.txt cp_reads_barley/assembly_denovo
+
+# Edit the file to contain the next:
+1 SRR491411 cp-SRR491411.wind15_28.3crop95.mlen40.corr.12.fq.gz FR 267 Sanger
+2 ERR126133 cp-ERR126133.wind15_28.3crop44.mlen40.corr.12.fq.gz RF 2364 Sanger
+
+# 5.3) assemble reads -ref
+$CHLOROP/2_assemble_reads.pl cp_reads_barley assembly_denovo
+# final assembly: cp_reads_barley/assembly_denovo_kmer47_sample500000/gapfiller.gapfilled.final.fa
