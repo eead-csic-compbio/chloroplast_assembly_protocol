@@ -26,7 +26,8 @@ cp cp_reads_brachy/clean_reads.txt cp_reads_brachy/assembly_pe
 1 testPE cp-SRR547945.wind15_28.3crop94.mlen60.corr.12.fq.gz FR 166 Sanger
 
 # 6) assemble reads +ref
-$CHLOROP/2_assemble_reads.pl cp_reads_brachy assembly_pe -ref $CHLOROP/reference.fna
+$CHLOROP/2_assemble_reads.pl cp_reads_brachy assembly_pe -ref $CHLOROP/reference.fna \
+  -refcolumbus $CHLOROP/reference4columbus.fna
 # final assembly: cp_reads_brachy/assembly_pe_kmer47_sample500000/gapfiller.gapfilled.final.fa
 
 # 7) assemble reads -ref
