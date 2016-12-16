@@ -92,7 +92,7 @@ and edit it reordering rows so that testPE is number 1:
 
 * Assemble cp genome combining PE + MP libraries (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
-./2_assemble_reads.pl test_cp assembly_mp -ref reference.fna
+./2_assemble_reads.pl test_cp assembly_mp -ref reference.fna -refcolumbus reference4columbus.fna
 ```
 
 ##### Example of de-novo assembly
