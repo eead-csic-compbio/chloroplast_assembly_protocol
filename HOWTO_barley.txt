@@ -34,7 +34,8 @@ cp cp_reads_barley/cleanreads.txt cp_reads_barley/assembly_conf
 2 ERR126133 cp-ERR126133.wind15_28.3crop44.mlen40.corr.12.fq.gz RF 2364 Sanger
 
 # 4.3) assemble reads +ref
-$CHLOROP/2_assemble_reads.pl cp_reads_barley assembly_conf -ref $CHLOROP/reference.fna
+$CHLOROP/2_assemble_reads.pl cp_reads_barley assembly_conf -ref $CHLOROP/reference.fna \
+  -refcolumbus $CHLOROP/reference4columbus.fna
 # final assembly: cp_reads_barley/assembly_conf_kmer47_sample500000/gapfiller.gapfilled.final.fa
 
 # 5) de-novo assembly
