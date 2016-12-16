@@ -5,7 +5,7 @@
 
 #Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
 #1) Estacion Experimental de Aula Dei-CSIC, Zaragoza, Spain
-#2) Escuela Politécnica Superior de Huesca, U.Zaragoza, Spain
+#2) Escuela Politecnica Superior de Huesca, U.Zaragoza, Spain
 #3) Fundacion ARAID, Zaragoza, Spain
 
 use strict;
@@ -39,12 +39,14 @@ my $MPorient   = 'RF';    # default orientation of MP reads
 my $MPencoding = 'Sanger';
 my $outDIR     = ''; 
 my $refFASTA   = undef;
+my $refFASTAcol= undef;
 my $help;
 
 usage() if(@ARGV < 2 || 
   !GetOptions(
     'help|h'     => \$help, 
     'ref=s'      => \$refFASTA, 
+    'refcolumbus=s'  => \$refFASTAcol,
     'threads=i'  => \$CPUTHREADS,
     'sample=i'   => \$SAMPLESIZE,
     'kmer=i'     => \$KMER,
@@ -57,7 +59,8 @@ sub usage
   print   "./2_assemble_reads.pl WORKING_DIR ASSEMBLY_NAME [Options] \n";
   print   "\nOptions:\n";
   print   "-h this message\n";
-  print   "--ref      reference genome in FASTA format            (optional, by default performs de-novo assembly)\n"; 
+  print   "--ref          reference genome in FASTA format        (optional, by default performs de-novo assembly)\n"; 
+  print   "--refcolumbus  reference genome split in two contigs   (optional, required with -ref)\n\n";
   print   "--threads  number of CPU threads to use                (optional, default=$CPUTHREADS)\n"; 
   print   "--sample   number of reads to be assembled             (optional, default=$SAMPLESIZE)\n";
   print   "--kmer     k-mer size for Velvet assembler             (optional, default=$KMER)\n"; 
@@ -86,17 +89,21 @@ if (substr($outDIR, -1) ne "/"){
 }
 
 
-printf("\n# %s %s --ref %s --PEenc %s \\\n".
+printf("\n# %s %s --ref %s \\\n".
+      "#  --refcolumbus %s \\\n".
+      "#  --PEenc %s \\\n".
       "#  --MPenc %s \\\n".
       "#  --threads %d --sample %d --kmer %d --outdir %s\n\n",
-	$0,$configname,$refFASTA,$PEencoding,
+	$0,$configname,$refFASTA,$refFASTAcol,$PEencoding,
   $MPencoding,$CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR); 
 
 open(COMMAND,">$outDIR/command.txt");
-printf COMMAND ("%s %s --ref %s --PEenc %s \\\n".
+printf COMMAND ("%s %s --ref %s \\\n".
+      "  --refcolumbus %s \\\n".
+      "  --PEenc %s \\\n".
       "  --MPenc %s \\\n".
       "  --threads %d --sample %d --kmer %d --outdir %s\n\n",
-	$0,$configname,$refFASTA,$PEencoding,
+	$0,$configname,$refFASTA,$refFASTAcol,$PEencoding,
   $MPencoding,$CPUTHREADS,$SAMPLESIZE,$KMER,$outDIR);
 close(COMMAND);
       
@@ -302,7 +309,7 @@ if (defined($refFASTA)){
 ##################################
 if (defined($refFASTA)){
   # 3.1) make kmer hash table with reads mapped to split chloroplast reference
-  $velvet_cmd = "$VELVETH $outDIR $KMER -reference $refFASTA -shortPaired -sam $samfile";
+  $velvet_cmd = "$VELVETH $outDIR $KMER -reference $refFASTAcol -shortPaired -sam $samfile";
   if($MPfile)
   {
     $velvet_cmd .= " -shortPaired2 -sam $samfileMP";
