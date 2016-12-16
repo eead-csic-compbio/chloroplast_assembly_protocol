@@ -51,6 +51,9 @@ MP libraries are expected to be RF but can be set to FR as well.
 
 * [reference.fna](reference.fna) is required by this protocol, and it should contain the cp genome of a related species.
 
+* [reference4columbus.fna](reference4columbus.fna) is required for reference-guided assembly. Contains the cp genome of a related species split in two non-overlapping contigs so that the first conting contains the fragment LSC-IRa and the second the fragment SSC-IRb. This allows assembly of both inverted repeat (IRa and IRb) regions, as discovered by [McPherson et al](http://bmcecol.biomedcentral.com/articles/10.1186/1472-6785-13-8).
+
+
 ## Examples
 
 Input reads are within "test" directory.
@@ -76,7 +79,7 @@ and edit it leaving only one row:
 
 * Assemble cp genome from a single PE library (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
-./2_assemble_reads.pl test_cp assembly_pe -ref ./reference.fna
+./2_assemble_reads.pl test_cp assembly_pe -ref reference.fna -refcolumbus reference4columbus.fna
 ```
 ######- using both PE and MP libraries
 
@@ -103,7 +106,7 @@ and edit it reordering rows so that testPE is number 1:
 `./1_cleanreads.pl -folder test_cp_noref `
 
 * Create config file test_cp_noref/assembly_pe `cp test_cp_noref/cleanreads.txt test_cp_noref/assembly_pe`
-and edit test_cp/assembly_pe file leaving one (PE reads) or two rows (PE + MP reads; see previous examples).
+and edit test_cp_noref/assembly_pe file leaving one (PE reads) or two rows (PE + MP reads; see previous examples).
 
     > In this case we are leaving a single PE library, and note that we have to provide orientation
     > and insert size (FR and 221 in this example):
