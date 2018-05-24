@@ -15,7 +15,7 @@ This protocol was designed as part of this paper:
 
 Sancho R, Cantalapiedra CP, López-Alvarez D, Gordon SP, Vogel JP, Pilar Catalán P,Contreras-Moreira (2018) 
 Comparative plastome genomics and phylogenomics of Brachypodium: flowering time signatures, introgression and 
-recombination in recently diverged ecotypes. New Phytologist, [doi:10.1111/nph.14926](https://nph.onlinelibrary.wiley.com/doi/abs/10.1111/nph.14926) [preprint](https://www.researchgate.net/publication/321578652_Comparative_plastome_genomics_and_phylogenomics_of_Brachypodium_Flowering_time_signatures_introgression_and_recombination_in_recently_diverged_ecotypes), ENA sequences: [LT222229-LT222230](https://www.ebi.ac.uk/ena/data/view/LT222229-LT222230) & [LT558582-LT558636](https://www.ebi.ac.uk/ena/data/view/LT558582-LT558636)
+recombination in recently diverged ecotypes. New Phytologist, [doi:10.1111/nph.14926](https://nph.onlinelibrary.wiley.com/doi/abs/10.1111/nph.14926) | [preprint](https://www.researchgate.net/publication/321578652_Comparative_plastome_genomics_and_phylogenomics_of_Brachypodium_Flowering_time_signatures_introgression_and_recombination_in_recently_diverged_ecotypes) | ENA sequences: [LT222229-LT222230](https://www.ebi.ac.uk/ena/data/view/LT222229-LT222230) & [LT558582-LT558636](https://www.ebi.ac.uk/ena/data/view/LT558582-LT558636)
 
 ## Software dependencies
 
