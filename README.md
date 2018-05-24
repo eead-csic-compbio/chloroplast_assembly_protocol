@@ -46,6 +46,19 @@ This is the full list of software, located in bin/, required for the protocol:
 
 Optionally [samtools](http://samtools.sourceforge.net) is used in [HOWTOcheck_assembly.txt](HOWTOcheck_assembly.txt).
 
+**Trouble-shooting:** The following error message: 
+
+*bin/split_pairs_v0.5/kseqread: symbol lookup error: bin/split_pairs_v0.5/kseqread: undefined symbol: _ZN7pcrecpp2RE4InitERKSsPKNS_10RE_OptionsE*
+
+can be sorted as follows:
+
+```{shell}
+cd bin/split_pairs_v0.5
+make clean
+make
+cd ../..
+```
+
 ## Input reads
 
 This pipeline has been tested with paired-end (PE) and mate-pairs (MP) read libraries,
