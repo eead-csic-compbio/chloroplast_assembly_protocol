@@ -9,10 +9,18 @@ Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
 2. Escuela Politécnica Superior de Huesca, U.Zaragoza, Spain
 3. Fundación ARAID, Zaragoza, Spain
 
+## Citation
+
+This protocol was designed as part of this paper:
+
+Sancho R, Cantalapiedra CP, López-Alvarez D, Gordon SP, Vogel JP, Pilar Catalán P,Contreras-Moreira (2018) 
+Comparative plastome genomics and phylogenomics of Brachypodium: flowering time signatures, introgression and 
+recombination in recently diverged ecotypes. New Phytologist, [doi:10.1111/nph.14926](https://nph.onlinelibrary.wiley.com/doi/abs/10.1111/nph.14926) [preprint](https://www.researchgate.net/publication/321578652_Comparative_plastome_genomics_and_phylogenomics_of_Brachypodium_Flowering_time_signatures_introgression_and_recombination_in_recently_diverged_ecotypes), ENA sequences: [LT222229-LT222230](https://www.ebi.ac.uk/ena/data/view/LT222229-LT222230) & [LT558582-LT558636](https://www.ebi.ac.uk/ena/data/view/LT558582-LT558636)
+
 ## Software dependencies
 
 This protocol has been tested on Linux x86_64 systems, although it should also work on Mac-OSX settings.
-It requires perl, which should be installed on all Linux environments, plus some third-party programs listed below,
+It requires perl5, which should be installed on most Linux environments, plus some third-party programs listed below,
 which are provided pre-compiled. In order to check whether they work on your machine, or to re-compile them otherwise,
 for instance on Mac-OSX, please run on the terminal:
 ```{shell}  
