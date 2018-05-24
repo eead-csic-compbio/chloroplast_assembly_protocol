@@ -78,7 +78,16 @@ print "Config file=$configfile\n";
 if(!-s $configfile){die "\n# $0 : A config file is needed for the assembly \n\t(see README and $workingDIR/cleanreads.txt)\n";}
 
 if(defined($refFASTA) && (!-s $refFASTA))
-{ die "\n# $0 : need a valid -ref FASTA file, exit\n"; }
+{ 
+	die "\n# $0 : need a valid -ref FASTA file, exit\n"; 
+}
+else
+{
+	if(defined($refFASTAcol) && (!-s $refFASTAcol))
+	{ 
+		die "\n# $0 : need a valid -refcolumbus FASTA file, exit\n"; 
+	}
+}
 
 if(!$outDIR){ $outDIR = "$configfile\_kmer$KMER\_sample$SAMPLESIZE" }
 if(!-s $outDIR){ mkdir($outDIR) }

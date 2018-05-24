@@ -59,7 +59,7 @@ MP libraries are expected to be RF but can be set to FR as well.
 
 * [reference.fna](reference.fna) is required by this protocol, and it should contain the cp genome of a related species.
 
-* [reference4columbus.fna](reference4columbus.fna) is required for reference-guided assembly. Contains the cp genome of a related species split in two non-overlapping contigs so that the first conting contains the fragment LSC-IRa and the second the fragment SSC-IRb. This allows assembly of both inverted repeat (IRa and IRb) regions, as discovered by [McPherson et al](http://bmcecol.biomedcentral.com/articles/10.1186/1472-6785-13-8).
+* [reference4columbus.fna](reference4columbus.fna) is required for reference-guided assembly. Contains the cp genome of a related species split in two non-overlapping contigs so that the first conting contains the fragment LSC-IRa and the second the fragment SSC-IRb. This allows assembly of both inverted repeat (IRa and IRb) regions, as discovered by [McPherson et al](http://bmcecol.biomedcentral.com/articles/10.1186/1472-6785-13-8). Check the FASTA headers in both reference files to see how they must look like.
 
 
 ## Examples
@@ -100,7 +100,7 @@ and edit it reordering rows so that testPE is number 1:
 
 * Assemble cp genome combining PE + MP libraries (see [flowchart-1](./pics/2_assemble_reads-1.png) and [flowchart-2](./pics/2_assemble_reads-2.png)):
 ```{shell}
-./2_assemble_reads.pl test_cp assembly_mp -ref reference.fna
+./2_assemble_reads.pl test_cp assembly_mp -ref reference.fna -refcolumbus reference4columbus.fna
 ```
 
 ##### Example of de-novo assembly
