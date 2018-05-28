@@ -25,7 +25,7 @@ my $MINREADLENGTH = 40; # this will allow assemblying with kmers up to this size
 
 my $MINSURVIVALRATE = 50; # a warning will be used if less than these %reads survive trimmomatic
 
-my $BINPATH = $Bin.'/bin';
+my $BINPATH = "'$Bin'".'/bin';
 
 my $FASTQCEXE     = $BINPATH.'/FastQC/fastqc';
 my $SPLITPAIRSEXE = $BINPATH.'/split_pairs_v0.5/split_pairs.pl';

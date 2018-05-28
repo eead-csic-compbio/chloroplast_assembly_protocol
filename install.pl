@@ -4,7 +4,7 @@
 
 #Carlos P Cantalapiedra (1), Ruben Sancho (1,2), Bruno Contreras Moreira (1,3)
 #1) Estacion Experimental de Aula Dei-CSIC, Zaragoza, Spain
-#2) Escuela Politécnica Superior de Huesca, U.Zaragoza, Spain
+#2) Escuela Politecnica Superior de Huesca, U.Zaragoza, Spain
 #3) Fundacion ARAID, Zaragoza, Spain
 
 use strict;
@@ -13,7 +13,7 @@ use File::Basename;
 use FindBin '$Bin';
 use lib "$Bin/bin";
 
-my $BINPATH = $Bin.'/bin';
+my $BINPATH = "'$Bin'".'/bin';
 
 my %binsoft = (
   'bowtie' => [ $BINPATH.'/SSPACE-BASIC-2.0_linux-x86_64/bowtie/bowtie ', 'Usage' ]

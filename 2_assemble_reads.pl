@@ -13,7 +13,7 @@ use FindBin '$Bin';
 use Getopt::Long;
 use File::Basename;
 
-my $BINPATH = $Bin.'/bin';
+my $BINPATH = "'$Bin'".'/bin';
 
 my $SPLITEXE   = $BINPATH.'/split_pairs_v0.5/split_pairs.pl';
 my $BWAEXE     = $BINPATH.'/bwa-0.7.6a/bwa';

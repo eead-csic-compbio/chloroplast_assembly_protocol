@@ -10,7 +10,7 @@
 use strict;
 use FindBin '$Bin';
 
-my $DUKEXE = $Bin.'/bin/duk/duk';
+my $DUKEXE = "'$Bin'".'/bin/duk/duk';
 
 #my $refcpFASTA = $Bin.'/poaceae.fna';
 # contains several cps from Poaceae species:
