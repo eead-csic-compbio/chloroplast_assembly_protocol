@@ -10,30 +10,30 @@
 use strict;
 use Cwd;
 use File::Basename;
+use File::Spec;
 use FindBin '$Bin';
-use lib "$Bin/bin";
 
-my $BINPATH = "'$Bin'".'/bin';
+my $BINPATH = File::Spec->catfile( $Bin , 'bin' );
 
 my %binsoft = (
-  'bowtie' => [ $BINPATH.'/SSPACE-BASIC-2.0_linux-x86_64/bowtie/bowtie ', 'Usage' ]
+  'bowtie' => [ 'SSPACE-BASIC-2.0_linux-x86_64/bowtie/bowtie ', 'Usage' ]
 );
 
 my %Csoft = ( 
-  'bwa' => [ $BINPATH.'/bwa-0.7.6a/bwa', 'Program' ] ,
-  'seqtk' => [  $BINPATH.'/seqtk/seqtk', 'Usage' ] ,
-  'velvet' => [ $BINPATH.'/velvet_1.2.08/velvetg', 'Usage' ] 
+  'bwa' => [ 'bwa-0.7.6a/', 'bwa', 'Program' ] ,
+  'seqtk' => [  'seqtk/', 'seqtk', 'Usage' ] ,
+  'velvet' => [ 'velvet_1.2.08/', 'velvetg', 'Usage' ] 
 );
   
 my %CPPsoft = ( 
-  'duk' => [ $BINPATH.'/duk/duk', 'Reference' ] ,
-  'musket' => [ $BINPATH.'/musket-1.0.6/musket', 'Usage' ] ,
-  'split_pairs' => [ $BINPATH.'/split_pairs_v0.5/split_pairs_bf', 'usage' ]  
+  'duk' => [ 'duk/', 'duk', 'Reference' ] ,
+  'musket' => [ 'musket-1.0.6/', 'musket', 'Usage' ] ,
+  'split_pairs' => [ 'split_pairs_v0.5/', 'split_pairs_bf', 'usage' ]  
 );
 
 my %javasoft = (
-  'fastqc' => [ $BINPATH.'/FastQC/fastqc -v', 'FastQC v0.10.1' ],
-  'trimmomatic' => [ "java -jar $BINPATH/Trimmomatic-0.32/trimmomatic-0.32.jar", 'Usage' ]
+  'fastqc' => [ 'FastQC/fastqc -v', 'FastQC v0.10.1' ],
+  'trimmomatic' => [ 'java -jar Trimmomatic-0.32/trimmomatic-0.32.jar', 'Usage' ]
 );
 
 my ($soft,$path,$pathexe,$output);
@@ -41,9 +41,11 @@ my $cwd = getcwd();
 
 print "\n## checking software provided in binary form: \n";
 
+chdir($BINPATH); 
+
 foreach $soft (keys(%binsoft))
 {    
-  $path = dirname($binsoft{$soft}[0]);
+  $path = $binsoft{$soft}[0];
   print "# $soft ($path)\n";
   
   $output = `$binsoft{$soft}[0] 2>&1`;
@@ -53,7 +55,7 @@ foreach $soft (keys(%binsoft))
     $output = `$pathexe 2>&1`; 
     if($output !~ /$binsoft{$soft}[1]/ )
     {
-      die "<<fail, please obtain binaries suited to your system and place them in $path\n"; 
+      die "<<failed test, please obtain binaries suited to your system and place them in $path\n"; 
     }
     else{ print ">> OK\n"; }
   }
@@ -64,26 +66,26 @@ print "\n## checking pre-compiled C software: \n";
 
 foreach $soft (keys(%Csoft))
 {    
-  $path = dirname($Csoft{$soft}[0]);
+  $path = $Csoft{$soft}[0];
   print "# $soft ($path)\n";
   
-  $output = `$Csoft{$soft}[0] 2>&1`;
-  if($output !~ /$Csoft{$soft}[1]/)
+  $output = `$Csoft{$soft}[0]$Csoft{$soft}[1]  2>&1`;
+  if($output !~ /$Csoft{$soft}[2]/)
   {
-    $pathexe = basename($Csoft{$soft}[0]);
+    $pathexe = $Csoft{$soft}[1];
     $output = `$pathexe 2>&1`;
-    if($output !~ /$binsoft{$soft}[1]/ )
+    if($output !~ /$binsoft{$soft}[2]/ )
     {
       print "\n# compiling $soft in $path (requires gcc compiler) ...\n";
       chdir($path);
       if($soft eq 'velvet'){ system("make CATEGORIES=8 MAXKMERLENGTH=201 LONGSEQUENCES=1 2>&1") }
       else{ system("make clean; make 2>&1") }
-      chdir($cwd);
+      chdir($BINPATH);
     
-      $output = `$Csoft{$soft}[0] 2>&1`;
-      if($output !~ /$Csoft{$soft}[1]/)
+      $output = `$Csoft{$soft}[0]$Csoft{$soft}[1] 2>&1`;
+      if($output !~ /$Csoft{$soft}[2]/)
       {
-        die "<<fail auto-compiling, please install gcc compiler and/or resolve missing dependencies\n"; 
+        die "<<failed auto-compiling, please install gcc compiler and/or resolve missing dependencies\n"; 
       }
     }
     else{ print ">> OK\n"; }  
@@ -95,21 +97,21 @@ print "\n## checking pre-compiled C++ software: \n";
 
 foreach $soft (keys(%CPPsoft))
 {    
-  $path = dirname($CPPsoft{$soft}[0]);
+  $path = $CPPsoft{$soft}[0];
   print "# $soft ($path)\n";
   
-  $output = `$CPPsoft{$soft}[0] 2>&1`;
-  if($output !~ /$CPPsoft{$soft}[1]/)
+  $output = `$CPPsoft{$soft}[0]$CPPsoft{$soft}[1] 2>&1`;
+  if($output !~ /$CPPsoft{$soft}[2]/)
   {
     print "\n# compiling $soft in $path (requires g++ compiler) ...\n";
     chdir($path);
     system("make clean; make 2>&1");
-    chdir($cwd);
+    chdir($BINPATH);
     
-    $output = `$CPPsoft{$soft}[0] 2>&1`;
-    if($output !~ /$CPPsoft{$soft}[1]/)
+    $output = `$CPPsoft{$soft}[0]$CPPsoft{$soft}[1] 2>&1`;
+    if($output !~ /$CPPsoft{$soft}[2]/)
     {
-      die "<<fail auto-compiling, please install g++ compiler and/or resolve missing dependencies\n"; 
+      die "<<failed auto-compiling, please install g++ compiler and/or resolve missing dependencies\n"; 
     }  
   }
   else{ print ">> OK\n"; }
@@ -125,7 +127,7 @@ foreach $soft (keys(%javasoft))
   $output = `$javasoft{$soft}[0] 2>&1`;
   if($output !~ /$javasoft{$soft}[1]/)
   {
-    die "<<fail auto-compiling, please install java run-time enviroment (jre)\n";   
+    die "<<failed test, please install java run-time enviroment (jre)\n";   
   }
   else{ print ">> OK\n"; }
 }
