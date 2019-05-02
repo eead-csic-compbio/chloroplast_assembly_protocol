@@ -10,10 +10,11 @@ out of whole-genome reads.
 ========================
 
 This protocol has been tested on Linux x86_64 systems, although it should also work on Mac-OSX 
-settings. It requires perl, which should be installed on all Linux environments, plus 
-some third-party programs listed below, which are provided pre-compiled. In order to check 
-whether they work on your machine, or to re-compile them otherwise, for instance on 
-Mac-OSX, please run on the terminal:
+settings. It requires perl5, which should be installed on most Linux environments, and the 
+following packages: g++, make, libz-dev, libpcre3-dev, java (or default-jre in Ubuntu). 
+In addition, it uses some third-party programs listed below, which are provided pre-compiled. 
+In order to check whether they work on your machine, or to re-compile them otherwise, 
+for instance on Mac-OSX, please run on the terminal:
 
 perl ./install.pl
 
